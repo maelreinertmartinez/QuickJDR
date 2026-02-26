@@ -5,11 +5,11 @@ services:
       dockerfile: Dockerfile
       target: dev
     ports:
-      - 6767:5173
+      - 5173:5173
     volumes:
       - ./client:/app
     environment:
-      - VITE_API_URL=http://backend:65535
+      - VITE_API_URL=http://127.0.0.1:8000
     depends_on:
       - backend
 
@@ -18,7 +18,7 @@ services:
       context: backend
       dockerfile: Dockerfile
     ports:
-      - 65535:8000
+      - 8000:8000
     volumes:
       - ./backend:/app
     environment:

@@ -1,0 +1,49 @@
+services:
+  client:
+    build:
+      context: client
+      dockerfile: Dockerfile
+      target: dev
+    ports:
+      - 6767:5173
+    volumes:
+      - ./client:/app
+    environment:
+      - VITE_API_URL=http://backend:65535
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    ports:
+      - 65535:8000
+    volumes:
+      - ./backend:/app
+    environment:
+      - APP_ENV=development
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_DATABASE=quick-jdr
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+    depends_on:
+      - database
+    networks:
+      - quick-jdr-network
+    
+  database:
+    image: postgres:17-alpine
+    volumes:
+      - ./database:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=quick-jdr
+    networks:
+      - quick-jdr-network
+
+networks:
+  quick-jdr-network:
+    driver: bridge

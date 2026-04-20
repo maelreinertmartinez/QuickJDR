@@ -73,3 +73,5 @@ CREATE TABLE party (
 );
 
 CREATE INDEX ON party (mj_id);
+
+INSERT INTO roles (label) VALUES ('game_master');

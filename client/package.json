@@ -1,5 +1,5 @@
 {
-  "name": "quick-jdr-frontend",
+  "name": "quick-jdr-client",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -13,8 +13,11 @@
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.2.1",
     "axios": "^1.13.5",
-    "vue": "^3.5.28"
+    "tailwindcss": "^4.2.1",
+    "vue": "^3.5.28",
+    "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",

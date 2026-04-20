@@ -40,12 +40,6 @@ RUN npm run build
 # -----------------------------------------------------------------------------
 # Prod : build de production servi par serve
 # -----------------------------------------------------------------------------
-# FROM builder-prod AS prod
-
-# EXPOSE 8080
-
-# CMD ["http-server", "dist"]
-
 FROM nginx:alpine AS prod
 
 COPY --from=builder-prod /app/dist /usr/share/nginx/html

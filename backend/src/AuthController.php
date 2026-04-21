@@ -2,7 +2,10 @@
 
 class AuthController
 {
-    public function __construct(private UserGateway $gateway) {}
+    public function __construct(
+        private UserGateway $users,
+        private RoleGateway $roles,
+    ) {}
 
     /**
      * @param array<int,mixed> $data
@@ -60,7 +63,7 @@ class AuthController
             return;
         }
 
-        $user = $this->gateway->getByUsername($data["username"]);
+        $user = $this->users->getByUsername($data["username"]);
 
         if ($user !== false) {
             http_response_code(454);
@@ -72,11 +75,23 @@ class AuthController
 
         $data["password"] = password_hash($data["password"], PASSWORD_DEFAULT);
 
-        $this->gateway->create($data);
+        $this->users->create($data);
+
+        $user = $this->users->getByUsername($data["username"]);
+
+        if ($data["as_game_master"] ?? false) {
+            $user = $this->users->getByUsername($data["username"]);
+            $role = $this->roles->getByLabel("game_master");
+            $this->users->addRoleToUser($user["id"], $role["id"]);
+        }
+
         http_response_code(201);
+        session_start();
+        $_SESSION["user_id"] = $user["id"];
         echo json_encode([
             "message" => "Registration successful",
-            "roles" => $this->gateway->getRolesByUsername($data["username"]),
+            "username" => $user["username"],
+            "roles" => $this->users->getRolesByUsername($data["username"]),
         ]);
     }
     /**
@@ -84,7 +99,8 @@ class AuthController
      */
     private function login(array $data): void
     {
-        if (empty($_SESSION["user_id"])) {
+        session_start();
+        if (!empty($_SESSION["user_id"])) {
             http_response_code(401);
             echo json_encode([
                 "message" => "You are already logged in",
@@ -92,7 +108,7 @@ class AuthController
             return;
         }
 
-        $user = $this->gateway->getByUsername($data["username"]);
+        $user = $this->users->getByUsername($data["username"]);
         if (
             $user["password"] === false ||
             !password_verify($data["password"], $user["password"])
@@ -100,17 +116,15 @@ class AuthController
             http_response_code(401);
             echo json_encode([
                 "message" => "Invalid username or password",
-                "roles" => $this->gateway->getRolesByUsername(
-                    $data["username"],
-                ),
             ]);
             return;
         }
-        session_start();
         $_SESSION["user_id"] = $user["id"];
         http_response_code(200);
         echo json_encode([
             "message" => "Login successful",
+            "username" => $user["username"],
+            "roles" => $this->users->getRolesByUsername($user["username"]),
         ]);
     }
 

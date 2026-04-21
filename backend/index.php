@@ -28,7 +28,10 @@ $database = new Database(
 
 switch ($parts[1] ?? "") {
     case "auth":
-        $authController = new AuthController(new UserGateway($database));
+        $authController = new AuthController(
+            new UserGateway($database),
+            new RoleGateway($database),
+        );
         $authController->processRequest(
             $_SERVER["REQUEST_METHOD"],
             $parts[2] ?? "",

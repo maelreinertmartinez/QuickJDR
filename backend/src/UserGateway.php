@@ -19,9 +19,6 @@ class UserGateway
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * @param array $data
-     */
     public function create(array $data)
     {
         $sql = "INSERT INTO users (username, password)
@@ -31,6 +28,17 @@ class UserGateway
 
         $stmt->bindValue(":username", $data["username"], PDO::PARAM_STR);
         $stmt->bindValue(":password", $data["password"], PDO::PARAM_STR);
+        $stmt->execute();
+    }
+
+    public function addRoleToUser(int $userId, int $roleId)
+    {
+        $sql = "INSERT INTO user_role (user_id, role_id)
+                VALUES (:user_id, :role_id)";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(":user_id", $userId, PDO::PARAM_INT);
+        $stmt->bindValue(":role_id", $roleId, PDO::PARAM_INT);
         $stmt->execute();
     }
 

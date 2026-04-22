@@ -15,8 +15,6 @@ if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
     exit();
 }
 
-$data = json_decode(file_get_contents("php://input"), true) ?? [];
-
 $url = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 $parts = explode("/", $url);
 
@@ -29,16 +27,21 @@ $database = new Database(
 
 switch ($parts[1] ?? "") {
     case "auth":
-        $authController = new AuthController(new UserGateway($database));
-        $authController->processRequest($_SERVER["REQUEST_METHOD"], $parts[2] ?? "", $data);
+        $authController = new AuthController(
+            new UserGateway($database),
+            new RoleGateway($database)
+        );
+        $authController->processRequest($_SERVER["REQUEST_METHOD"], $parts[2] ?? "", $_POST);
         break;
 
     case "party":
+        $data = json_decode(file_get_contents("php://input"), true) ?? [];
         $partyController = new PartyController(new PartyGateway($database->getConnection()));
         $partyController->processRequest($_SERVER["REQUEST_METHOD"], $parts[2] ?? "", $data);
         break;
 
     case "characters":
+        $data = json_decode(file_get_contents("php://input"), true) ?? [];
         $characterController = new CharacterController(new CharacterGateway($database->getConnection()));
         $characterController->processRequest($_SERVER["REQUEST_METHOD"], $parts[2] ?? "", $data);
         break;

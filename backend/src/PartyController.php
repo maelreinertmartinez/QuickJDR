@@ -8,13 +8,13 @@ class PartyController
     {
         session_start();
 
-       // if (!isset($_SESSION["user_id"])) {
-       //     http_response_code(401);
-       //     echo json_encode(["message" => "Not logged in"]);
-       //     return;
-      //  }
+        if (!isset($_SESSION["user_id"])) {
+            http_response_code(401);
+            echo json_encode(["message" => "Not logged in"]);
+            return;
+        }
 
-        $userId = $_SESSION["user_id"]??1;
+        $userId = $_SESSION["user_id"];
 
         switch ($action) {
             case "create":
@@ -31,7 +31,7 @@ class PartyController
 
             case "players":
                 if ($method === "GET") {
-                   $this->players(isset($_GET["id"]) ? (int)$_GET["id"] : null);
+                    $this->players(isset($_GET["id"]) ? (int)$_GET["id"] : null);
                 }
                 break;
 
@@ -43,6 +43,12 @@ class PartyController
 
     private function create(int $userId): void
     {
+        if (!$this->gateway->isGameMaster($userId)) {
+            http_response_code(403);
+            echo json_encode(["message" => "You must be a game master to create a party"]);
+            return;
+        }
+
         $id = $this->gateway->create($userId);
 
         http_response_code(201);
@@ -59,8 +65,7 @@ class PartyController
 
     private function players(?int $partyId): void
     {
-        if (!$partyId) 
-        {
+        if (!$partyId) {
             http_response_code(400);
             echo json_encode(["message" => "Missing party id"]);
             return;

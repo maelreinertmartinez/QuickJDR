@@ -8,13 +8,13 @@ class PartyController
     {
         session_start();
 
-        if (!isset($_SESSION["user_id"])) {
-            http_response_code(401);
-            echo json_encode(["message" => "Not logged in"]);
-            return;
-        }
+       // if (!isset($_SESSION["user_id"])) {
+       //     http_response_code(401);
+       //     echo json_encode(["message" => "Not logged in"]);
+       //     return;
+      //  }
 
-        $userId = $_SESSION["user_id"];
+        $userId = $_SESSION["user_id"]??1;
 
         switch ($action) {
             case "create":
@@ -26,6 +26,12 @@ class PartyController
             case "list":
                 if ($method === "GET") {
                     $this->list();
+                }
+                break;
+
+            case "players":
+                if ($method === "GET") {
+                   $this->players(isset($_GET["id"]) ? (int)$_GET["id"] : null);
                 }
                 break;
 
@@ -49,5 +55,19 @@ class PartyController
     private function list(): void
     {
         echo json_encode($this->gateway->getAll());
+    }
+
+    private function players(?int $partyId): void
+    {
+        if (!$partyId) 
+        {
+            http_response_code(400);
+            echo json_encode(["message" => "Missing party id"]);
+            return;
+        }
+
+        $players = $this->gateway->getPlayers($partyId);
+
+        echo json_encode($players);
     }
 }

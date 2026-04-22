@@ -20,4 +20,17 @@ class PartyGateway
         $stmt = $this->conn->query("SELECT * FROM party");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getPlayers(int $partyId): array
+    {
+        $stmt = $this->conn->prepare(
+        "SELECT id, user_id, name 
+         FROM characters 
+         WHERE party_id = :party_id"
+        );
+
+        $stmt->execute([":party_id" => $partyId]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

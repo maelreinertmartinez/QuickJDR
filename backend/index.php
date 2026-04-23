@@ -38,6 +38,17 @@ switch ($parts[1] ?? "") {
             $_POST,
         );
         break;
+    case "party":
+    $partyController = new PartyController(
+        new PartyGateway($database->getConnection())
+    );
+
+    $partyController->processRequest(
+        $_SERVER["REQUEST_METHOD"],
+        $parts[2] ?? "",
+        $_POST,
+    );
+    break;
     default:
         http_response_code(404);
         echo json_encode(["error" => "Not Found"]);

@@ -1,14 +1,11 @@
 <?php
 
-class UserGateway
+namespace QuickJDR\gateways;
+
+use PDO;
+
+class UserGateway extends Gateway
 {
-    private PDO $conn;
-
-    public function __construct(Database $database)
-    {
-        $this->conn = $database->getConnection();
-    }
-
     public function getAll(): array
     {
         $sql = "SELECT id, username

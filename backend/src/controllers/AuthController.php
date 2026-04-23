@@ -1,6 +1,11 @@
 <?php
 
-class AuthController
+namespace QuickJDR\controllers;
+
+use QuickJDR\gateways\RoleGateway;
+use QuickJDR\gateways\UserGateway;
+
+class AuthController implements Controller
 {
     public function __construct(
         private UserGateway $users,
@@ -136,5 +141,10 @@ class AuthController
         echo json_encode([
             "message" => "You are now logged out",
         ]);
+    }
+
+    public static function getBasePath(): string
+    {
+        return "auth";
     }
 }

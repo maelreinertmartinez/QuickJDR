@@ -1,13 +1,15 @@
 <?php
 
-class PartyGateway
-{
-    public function __construct(private PDO $conn) {}
+namespace QuickJDR\gateways;
 
+use PDO;
+
+class PartyGateway extends Gateway
+{
     public function create(int $mjId): int
     {
         $stmt = $this->conn->prepare(
-            "INSERT INTO party (mj_id) VALUES (:mj_id) RETURNING id"
+            "INSERT INTO party (mj_id) VALUES (:mj_id) RETURNING id",
         );
 
         $stmt->execute([":mj_id" => $mjId]);

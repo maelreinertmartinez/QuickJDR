@@ -1,11 +1,18 @@
 <?php
 
-class PartyController
+namespace QuickJDR\controllers;
+
+use QuickJDR\gateways\PartyGateway;
+
+class PartyController implements Controller
 {
     public function __construct(private PartyGateway $gateway) {}
 
-    public function processRequest(string $method, string $action, array $data): void
-    {
+    public function processRequest(
+        string $method,
+        string $action,
+        array $data,
+    ): void {
         session_start();
 
         if (!isset($_SESSION["user_id"])) {
@@ -42,12 +49,17 @@ class PartyController
         http_response_code(201);
         echo json_encode([
             "message" => "Party created",
-            "id" => $id
+            "id" => $id,
         ]);
     }
 
     private function list(): void
     {
         echo json_encode($this->gateway->getAll());
+    }
+
+    public static function getBasePath(): string
+    {
+        return "dice";
     }
 }

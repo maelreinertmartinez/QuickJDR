@@ -15,6 +15,7 @@ spec:
       containers:
         - name: client
           image: quickjdr-client
+          imagePullPolicy: Never
           env:
             - name: VITE_API_URL
               value: http://backend:8000

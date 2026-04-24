@@ -5,7 +5,6 @@ import RegisterPage from '@/pages/RegisterPage.vue'
 import { hasRole, hasToken } from '@/utils/api'
 import { createRouter, createWebHistory } from 'vue-router'
 import { hasToken, hasRole } from '@/utils/api'
-
 import JoueurPage from '@/pages/JoueurPage.vue'
 
 const routes = [

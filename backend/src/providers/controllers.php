@@ -10,6 +10,8 @@ use QuickJDR\gateways\DiceGateway;
 use QuickJDR\gateways\PartyGateway;
 use QuickJDR\gateways\CharacterGateway;
 use QuickJDR\controllers\UserController;
+use QuickJDR\controllers\SkillController;
+use QuickJDR\gateways\SkillGateway;
 
 
 return [
@@ -18,4 +20,5 @@ return [
     PartyController::class => [PartyGateway::class],
     CharacterController::class => [CharacterGateway::class],
     UserController::class => [UserGateway::class],
+    SkillController::class=>[SkillGateway::class],
 ];

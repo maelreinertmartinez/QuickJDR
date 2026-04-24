@@ -36,6 +36,12 @@ class PartyController implements Controller
                 }
                 break;
 
+            case "players":
+                if ($method === "GET") {
+                    $this->players(isset($_GET["id"]) ? (int)$_GET["id"] : null);
+                }
+                break;
+
             default:
                 http_response_code(404);
                 echo json_encode(["message" => "Unknown party action"]);
@@ -44,6 +50,12 @@ class PartyController implements Controller
 
     private function create(int $userId): void
     {
+        if (!$this->gateway->isGameMaster($userId)) {
+            http_response_code(403);
+            echo json_encode(["message" => "You must be a game master to create a party"]);
+            return;
+        }
+
         $id = $this->gateway->create($userId);
 
         http_response_code(201);
@@ -58,8 +70,19 @@ class PartyController implements Controller
         echo json_encode($this->gateway->getAll());
     }
 
+    private function players(?int $partyId): void
+    {
+        if (!$partyId) {
+            http_response_code(400);
+            echo json_encode(["message" => "Missing party id"]);
+            return;
+        }
+
+        echo json_encode($this->gateway->getPlayers($partyId));
+    }
+
     public static function getBasePath(): string
     {
-        return "dice";
+        return "party";
     }
 }

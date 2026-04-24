@@ -3,6 +3,7 @@ import MaitreJeuViewPage from '@/pages/MaitreJeuViewPage.vue'
 import PartiesPage from '@/pages/PartiesPage.vue'
 import RegisterPage from '@/pages/RegisterPage.vue'
 import MaitreJeuViewPage from '@/pages/MaitreJeuViewPage.vue'
+import JoueurPage from '@/pages/JoueurPage.vue'
 
 const routes = [
   {

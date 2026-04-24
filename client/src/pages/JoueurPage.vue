@@ -587,7 +587,7 @@ onMounted(fetchData)
         </div>
 
         <div v-else class="flex flex-col items-center justify-center h-full opacity-40">
-          
+
           <p class="text-xs text-creamy-jdr font-bold uppercase tracking-widest text-center">
 
           </p>

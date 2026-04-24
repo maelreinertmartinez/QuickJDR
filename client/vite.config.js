@@ -13,4 +13,14 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  server: {
+    host: true, // Permet l'accès externe au conteneur
+    port: 5173,
+    watch: {
+      usePolling: true, // Force Vite à vérifier les fichiers toutes les X millisecondes
+      interval: 100,
+    },
+    host: true, // Nécessaire pour que Docker expose correctement le port
+    strictPort: true,
+  },
 })

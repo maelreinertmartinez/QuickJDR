@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+        - name: client
+          image: quickjdr-client
+          env:
+            - name: VITE_API_URL
+              value: http://backend:8000
+          ports:
+            - containerPort: 5173

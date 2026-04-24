@@ -79,6 +79,7 @@ const textColorClass = computed(() => {
 
 <style scoped>
 /* Supprime les flèches par défaut de l'input number */
+/* Supprime les flèches des inputs numériques */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;

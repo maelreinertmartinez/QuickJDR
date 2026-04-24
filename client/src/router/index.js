@@ -3,7 +3,6 @@ import MaitreJeuViewPage from '@/pages/MaitreJeuViewPage.vue'
 import RegisterPage from '@/pages/RegisterPage.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import { hasToken, hasRole } from '@/utils/api'
-
 import JoueurPage from '@/pages/JoueurPage.vue'
 
 const routes = [

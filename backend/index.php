@@ -45,8 +45,18 @@ if (!$controller) {
     exit();
 }
 
+$data = [];
+if ($_SERVER["REQUEST_METHOD"] !== "GET") {
+    $contentType = $_SERVER["CONTENT_TYPE"] ?? "";
+    if (str_contains($contentType, "application/json")) {
+        $data = json_decode(file_get_contents("php://input"), true) ?? [];
+    } else {
+        $data = $_POST;
+    }
+}
+
 $controller->processRequest(
     $_SERVER["REQUEST_METHOD"],
     $parts[2] ?? "",
-    $_POST,
+    $data,
 );

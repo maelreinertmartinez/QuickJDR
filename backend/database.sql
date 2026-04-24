@@ -57,7 +57,7 @@ CREATE TABLE user_role (
 
 CREATE TABLE dice (
     id bigint GENERATED ALWAYS AS IDENTITY,
-    character_id integer NOT NULL,
+    character_id integer,
     value integer NOT NULL,
     max_value integer NOT NULL,
     launched_at timestamptz NOT NULL DEFAULT now(),
@@ -69,6 +69,15 @@ CREATE INDEX ON dice (character_id);
 CREATE TABLE party (
     id bigint GENERATED ALWAYS AS IDENTITY,
     mj_id bigint NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE session (
+    id bigint GENERATED ALWAYS AS IDENTITY,
+    user_id bigint NOT NULL,
+    party_id bigint NOT NULL,
+    started_at timestamptz NOT NULL DEFAULT now(),
+    ended_at timestamptz,
     PRIMARY KEY (id)
 );
 

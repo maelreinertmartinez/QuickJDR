@@ -32,6 +32,8 @@
 </template>
 
 <script setup>
+import axios from 'axios'
+
 defineProps({ history: Array })
 
 function formatTime(date) {

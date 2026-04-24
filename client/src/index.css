@@ -1,1 +1,23 @@
 @import 'tailwindcss';
+
+/*Color theme identity*/
+
+@theme {
+  /*background color*/
+  --color-dark-green-jdr: #122324;
+
+  /*surfaces, cards, sidebars... color*/
+  --color-green-jdr: #2F3A32;
+
+  /*text and interactions color*/
+  --color-creamy-jdr: #DB9F75;
+
+  /*primary button and interactions hover color*/
+  --color-orange-jdr: #804012;
+
+  /*hover button background, overlays, danger zone... color*/
+  --color-brown-jdr: #3e2411;
+
+  /*borders, separators, secondary elements... color*/
+  --color-olive-jdr: #545748;
+}

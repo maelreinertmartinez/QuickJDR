@@ -15,6 +15,7 @@ spec:
       containers:
         - name: backend
           image: quickjdr-backend
+          imagePullPolicy: Never
           env:
             - name: APP_ENV
               value: development

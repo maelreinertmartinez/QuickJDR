@@ -68,6 +68,7 @@ const modifyHealth = async (isDamage) => {
   }
 }
 
+// Lancement de dé utilisant l'URL concaténée
 const rollDice = async () => {
   isRolling.value = true
   diceResult.value = null

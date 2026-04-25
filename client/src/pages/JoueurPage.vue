@@ -753,7 +753,7 @@ const rollDice = async () => {
     if (res.data.new_health !== undefined) currentPlayer.value.health = res.data.new_health
     if (res.data.new_mana !== undefined) currentPlayer.value.mana = res.data.new_mana
   } catch (error) {
-    console.error(error)
+    console.error('Erreur rollDice:', error)
   } finally {
     isRolling.value = false
   }

@@ -834,6 +834,14 @@ onMounted(fetchData)
             readonly
           />
           <StatBar
+            label="MANA"
+            v-model="currentPlayer.mana"
+            :max="currentPlayer.max_mana"
+            color="blue"
+            readonly
+          />
+
+          <StatBar
             label="VIE"
             v-model="currentPlayer.health"
             :max="currentPlayer.max_health"
@@ -953,6 +961,7 @@ onMounted(fetchData)
         <p v-else class="text-xs text-olive-jdr italic">
           Sélectionnez une compétence dans le grimoire...
         </p>
+        <p v-else class="text-xs text-olive-jdr italic">Sélectionnez une compétence...</p>
       </div>
     </div>
   </div>

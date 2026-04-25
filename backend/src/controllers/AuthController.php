@@ -2,7 +2,7 @@
 
 namespace QuickJDR\controllers;
 
-use QuickJDR\AuthContext;
+use QuickJDR\contexts\AuthContext;
 use QuickJDR\gateways\RoleGateway;
 use QuickJDR\gateways\SessionGateway;
 use QuickJDR\gateways\UserGateway;

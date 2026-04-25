@@ -2,7 +2,7 @@
 
 namespace QuickJDR\controllers;
 
-use QuickJDR\AuthContext;
+use QuickJDR\contexts\AuthContext;
 use QuickJDR\attributes\RequiresAuth;
 use QuickJDR\gateways\DiceGateway;
 
@@ -20,7 +20,10 @@ class DiceController implements Controller
         switch ($action) {
             case "launch":
                 if ($method === "POST") {
-                    $this->launch((int) $data["character_id"], (int) $data["max_value"]);
+                    $this->launch(
+                        (int) $data["character_id"],
+                        (int) $data["max_value"],
+                    );
                 }
                 break;
 

@@ -42,7 +42,11 @@ class SkillController implements Controller
 
             case "character":
                 if ($method === "GET") {
-                    $this->getByCharacter(isset($_GET["character_id"]) ? (int)$_GET["character_id"] : null);
+                    $this->getByCharacter(
+                        isset($_GET["character_id"])
+                            ? (int) $_GET["character_id"]
+                            : null,
+                    );
                 }
                 break;
 
@@ -68,19 +72,21 @@ class SkillController implements Controller
     {
         if (empty($data["character_id"]) || empty($data["skill_id"])) {
             http_response_code(400);
-            echo json_encode(["message" => "character_id and skill_id are required"]);
+            echo json_encode([
+                "message" => "character_id and skill_id are required",
+            ]);
             return;
         }
 
         $id = $this->gateway->assignToCharacter(
-            (int)$data["character_id"],
-            (int)$data["skill_id"]
+            (int) $data["character_id"],
+            (int) $data["skill_id"],
         );
 
         http_response_code(201);
         echo json_encode([
             "message" => "Skill assigned to character",
-            "id" => $id
+            "id" => $id,
         ]);
     }
 

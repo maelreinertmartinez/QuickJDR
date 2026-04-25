@@ -1,6 +1,6 @@
 <?php
 
-namespace QuickJDR;
+namespace QuickJDR\contexts;
 
 class AuthContext
 {

@@ -2,7 +2,7 @@
 
 namespace QuickJDR\controllers;
 
-use QuickJDR\AuthContext;
+use QuickJDR\contexts\AuthContext;
 use QuickJDR\attributes\RequiresAuth;
 use QuickJDR\attributes\RequiresRole;
 use QuickJDR\gateways\PartyGateway;
@@ -33,7 +33,9 @@ class PartyController implements Controller
 
             case "players":
                 if ($method === "GET") {
-                    $this->players(isset($_GET["id"]) ? (int) $_GET["id"] : null);
+                    $this->players(
+                        isset($_GET["id"]) ? (int) $_GET["id"] : null,
+                    );
                 }
                 break;
 

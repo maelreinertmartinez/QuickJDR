@@ -1,7 +1,8 @@
 <?php
 
-namespace QuickJDR;
+namespace QuickJDR\middlewares;
 
+use QuickJDR\contexts\AuthContext;
 use QuickJDR\attributes\RequiresAuth;
 use QuickJDR\attributes\RequiresRole;
 use QuickJDR\controllers\Controller;

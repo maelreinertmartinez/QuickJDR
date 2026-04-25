@@ -173,13 +173,14 @@ const textColorClass = computed(() => {
 </script>
 
 <style scoped>
-/* Supprime les flèches des inputs numériques */
+/* Supprime les flèches par défaut de l'input number */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-input[type='number'] {
+
+input[type=number] {
   -moz-appearance: textfield;
 }
 </style>

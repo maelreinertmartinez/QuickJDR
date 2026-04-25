@@ -17,9 +17,13 @@
         <input
           type="number"
           :value="modelValue"
-          @input="$emit('update:modelValue', Number($event.target.value))"
-          class="bg-transparent text-right font-bold outline-none w-12 text-lg"
-          :class="textColorClass"
+          :readonly="readonly"
+          @input="!readonly && $emit('update:modelValue', Number($event.target.value))"
+          class="bg-transparent text-right font-bold outline-none w-12 text-lg transition-colors"
+          :class="[
+            textColorClass,
+            { 'cursor-default': readonly, 'focus:text-white': !readonly }
+          ]"
         />
         <span class="text-gray-600 text-sm font-medium">/ {{ max }}</span>
       </div>
@@ -36,16 +40,23 @@ const props = defineProps({
   max: Number,
   color: {
     type: String,
-    default: 'green', // 'green', 'blue', 'yellow', etc.
+    default: 'green', // 'green', 'blue', 'yellow', 'red'
   },
+  readonly: {
+    type: Boolean,
+    default: false
+  }
 })
 
 defineEmits(['update:modelValue'])
 
+// Calcul du remplissage de la barre
 const percentage = computed(() => {
+  if (props.max <= 0) return 0
   return Math.min((props.modelValue / props.max) * 100, 100)
 })
 
+// Couleur de la barre de progression (fond)
 const barColorClass = computed(() => {
   return {
     'bg-green-500': props.color === 'green',
@@ -55,6 +66,7 @@ const barColorClass = computed(() => {
   }
 })
 
+// Couleur du texte de l'input
 const textColorClass = computed(() => {
   return {
     'text-green-400': props.color === 'green',
@@ -66,13 +78,14 @@ const textColorClass = computed(() => {
 </script>
 
 <style scoped>
-/* Supprime les flèches des inputs numériques */
+/* Supprime les flèches par défaut de l'input number */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-input[type='number'] {
+
+input[type=number] {
   -moz-appearance: textfield;
 }
 </style>

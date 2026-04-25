@@ -2,8 +2,11 @@
 
 namespace QuickJDR\controllers;
 
+use QuickJDR\AuthContext;
+use QuickJDR\attributes\RequiresAuth;
 use QuickJDR\gateways\CharacterGateway;
 
+#[RequiresAuth]
 class CharacterController implements Controller
 {
     public function __construct(private CharacterGateway $gateway) {}
@@ -12,25 +15,18 @@ class CharacterController implements Controller
         string $method,
         string $action,
         array $data,
+        ?AuthContext $auth = null,
     ): void {
-        session_start();
-
-        if (!isset($_SESSION["user_id"])) {
-            http_response_code(401);
-            echo json_encode(["error" => "Not logged in"]);
-            return;
-        }
-
         switch ($method) {
             case "POST":
-                $this->create($data, $_SESSION["user_id"]);
+                $this->create($data, $auth->userId);
                 break;
 
             case "GET":
                 if ($action) {
-                    $this->getOne((int)$action);
+                    $this->getOne((int) $action);
                 } else {
-                    $this->getByParty((int)($_GET["party_id"] ?? 0));
+                    $this->getByParty((int) ($_GET["party_id"] ?? 0));
                 }
                 break;
 

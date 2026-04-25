@@ -2,8 +2,12 @@
 
 namespace QuickJDR\controllers;
 
+use QuickJDR\AuthContext;
+use QuickJDR\attributes\RequiresAuth;
+use QuickJDR\attributes\RequiresRole;
 use QuickJDR\gateways\PartyGateway;
 
+#[RequiresAuth]
 class PartyController implements Controller
 {
     public function __construct(private PartyGateway $gateway) {}
@@ -12,21 +16,12 @@ class PartyController implements Controller
         string $method,
         string $action,
         array $data,
+        ?AuthContext $auth = null,
     ): void {
-        session_start();
-
-        if (!isset($_SESSION["user_id"])) {
-            http_response_code(401);
-            echo json_encode(["message" => "Not logged in"]);
-            return;
-        }
-
-        $userId = $_SESSION["user_id"];
-
         switch ($action) {
             case "create":
                 if ($method === "POST") {
-                    $this->create($userId);
+                    $this->create($auth);
                 }
                 break;
 
@@ -38,7 +33,7 @@ class PartyController implements Controller
 
             case "players":
                 if ($method === "GET") {
-                    $this->players(isset($_GET["id"]) ? (int)$_GET["id"] : null);
+                    $this->players(isset($_GET["id"]) ? (int) $_GET["id"] : null);
                 }
                 break;
 
@@ -48,15 +43,10 @@ class PartyController implements Controller
         }
     }
 
-    private function create(int $userId): void
+    #[RequiresRole("game_master")]
+    private function create(?AuthContext $auth): void
     {
-        if (!$this->gateway->isGameMaster($userId)) {
-            http_response_code(403);
-            echo json_encode(["message" => "You must be a game master to create a party"]);
-            return;
-        }
-
-        $id = $this->gateway->create($userId);
+        $id = $this->gateway->create($auth->userId);
 
         http_response_code(201);
         echo json_encode([

@@ -67,4 +67,17 @@ class UserGateway extends Gateway
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getRolesByUserId(int $userId): array
+    {
+        $sql = "SELECT roles.label
+                FROM user_role
+                JOIN roles ON user_role.role_id = roles.id
+                WHERE user_role.user_id = :user_id";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(":user_id", $userId, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
 }

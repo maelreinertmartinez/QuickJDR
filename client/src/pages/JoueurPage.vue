@@ -4,7 +4,7 @@ import axios from 'axios'
 import StatBar from '@/components/StarBar.vue'
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: 'http://localhost:8000',
   headers: {
     Authorization: `Bearer ${localStorage.getItem('token')}`,
   },

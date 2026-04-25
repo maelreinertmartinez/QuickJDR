@@ -38,13 +38,20 @@ class PartyGateway extends Gateway
     public function getPlayers(int $partyId): array
     {
         $stmt = $this->conn->prepare(
-            "SELECT id, user_id, name 
+            "SELECT 
+                id AS character_id,
+                name,
+                health,
+                max_health,
+                armor,
+                max_armor,
+                mana,
+                max_mana
              FROM characters 
              WHERE party_id = :party_id"
         );
 
         $stmt->execute([":party_id" => $partyId]);
-
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

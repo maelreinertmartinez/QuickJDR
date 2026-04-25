@@ -10,6 +10,7 @@ const routes = [
   { path: '/login', name: 'Login', component: LoginPage },
   { path: '/register', name: 'Register', component: RegisterPage },
   { path: '/gamemaster/dashboard', name: 'MaitreJeuView', component: MaitreJeuViewPage },
+  { path: '/joueur', name: 'Joueur', component: JoueurPage },
 ]
 
 export default createRouter({

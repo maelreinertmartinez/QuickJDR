@@ -1,60 +1,49 @@
 <template>
-  <div class="min-h-screen bg-gray-950 text-gray-100 p-6">
+  <div class="min-h-screen bg-stone-950 text-amber-100 p-6">
+    <!-- Header -->
     <header class="flex items-center gap-3 mb-8">
-      <div class="w-9 h-9 bg-amber-600 rounded-lg flex items-center justify-center text-amber-100">
+      <div
+        class="w-9 h-9 bg-amber-700 rounded-lg flex items-center justify-center text-amber-100 text-lg"
+      >
         ♛
       </div>
-      <h1 class="text-xl font-medium">Table de jeu — Maître du jeu</h1>
+      <h1 class="text-xl font-semibold text-amber-100">Table de jeu — Maître du jeu</h1>
     </header>
 
-    <div v-if="loading" class="text-gray-400 text-sm">Chargement des joueurs…</div>
-    <div v-else-if="error" class="text-red-400 text-sm">
-      Erreur de chargement (données de secours utilisées).
+    <!-- Erreur globale -->
+    <div
+      v-if="error && !loading"
+      class="mb-4 px-4 py-2.5 rounded-xl bg-red-950/50 border border-red-900/50 text-red-400 text-sm"
+    >
+      ⚠️ {{ error }} — données de secours affichées.
     </div>
 
+    <div v-if="loading" class="text-amber-800 text-sm">Chargement des aventuriers…</div>
+
     <template v-if="!loading">
-      <section class="mb-6">
-        <p class="text-xs font-medium text-gray-400 uppercase tracking-widest mb-3">Joueurs</p>
-        <div class="flex flex-wrap gap-2">
-          <button
+      <!-- Grille des cartes joueurs -->
+      <section class="mb-8">
+        <p class="text-xs font-semibold text-amber-700 uppercase tracking-widest mb-4">
+          Aventuriers
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <PlayerCard
             v-for="p in players"
-            :key="p.id"
-            @click="selectedId = p.id"
-            :class="[
-              'flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm transition-all',
-              selectedId === p.id
-                ? 'border-2 border-blue-500 bg-blue-950 text-blue-200'
-                : 'border border-gray-700 bg-gray-900 hover:border-gray-600',
-            ]"
-          >
-            <div
-              :class="avatarClass(p)"
-              class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium"
-            >
-              {{ p.initials }}
-            </div>
-            <span class="font-medium">{{ p.name }}</span>
-            <span class="text-gray-400 text-xs">{{ p.class }}</span>
-          </button>
+            :key="p.character_id"
+            :player="p"
+            @updated="applyUpdate"
+          />
         </div>
       </section>
 
-      <section class="mb-8">
-        <p class="text-xs font-medium text-gray-400 uppercase tracking-widest mb-3">
-          Fiche du personnage
-        </p>
-        <PlayerDetail v-if="selectedPlayer" :player="selectedPlayer" :barColor="selectedColor" />
-        <p v-else class="text-sm text-gray-500 py-4">
-          Sélectionne un joueur pour voir sa fiche complète.
-        </p>
-      </section>
-
+      <!-- Lanceur de dés -->
       <section class="mb-8">
         <DiceRoller @rolled="onRoll" />
       </section>
 
+      <!-- Historique -->
       <section>
-        <p class="text-xs font-medium text-gray-400 uppercase tracking-widest mb-3">
+        <p class="text-xs font-semibold text-amber-700 uppercase tracking-widest mb-3">
           Historique des lancers
         </p>
         <DiceHistory :history="rollHistory" />
@@ -64,60 +53,20 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import PlayerDetail from '@/components/PlayerDetail.vue'
+import { ref, onMounted } from 'vue'
+import PlayerCard from '@/components/PlayerCard.vue'
 import DiceRoller from '@/components/DiceRoller.vue'
 import DiceHistory from '@/components/DiceHistory.vue'
 import { usePlayers } from '@/composables/usePlayers'
 import api, { setToken } from '@/utils/api'
 
-const { players, loading, error, fetchPlayers } = usePlayers()
-const selectedId = ref(null)
+const { players, loading, error, fetchPlayers, applyUpdate } = usePlayers()
 const rollHistory = ref([])
-
-const colorMap = {
-  teal: { avatar: 'bg-teal-800 text-teal-200', bar: '#1D9E75' },
-  coral: { avatar: 'bg-orange-900 text-orange-300', bar: '#D85A30' },
-  purple: { avatar: 'bg-purple-900 text-purple-300', bar: '#7F77DD' },
-  pink: { avatar: 'bg-pink-900 text-pink-300', bar: '#D4537E' },
-}
-
-const selectedPlayer = computed(() => {
-  if (!Array.isArray(players.value)) return null
-  return players.value.find((p) => p.id === selectedId.value) ?? null
-})
-
-const selectedColor = computed(() => colorMap[selectedPlayer.value?.color]?.bar ?? '#378ADD')
-
-function avatarClass(p) {
-  return colorMap[p?.color]?.avatar ?? 'bg-gray-700 text-gray-300'
-}
 
 function onRoll(result) {
   rollHistory.value.unshift(result)
   if (rollHistory.value.length > 10) rollHistory.value.pop()
 }
 
-onMounted(fetchPlayers)
-
-onMounted(() => {
-  api
-    .get('/party/list')
-    .then((response) => {
-      console.log(response.data)
-    })
-    .catch((error) => {
-      console.error(error)
-    })
-  // api
-  //   .post('/auth/login', { username: 'mael', password: 'test' })
-  //   .then((response) => {
-  //     console.log(response.data)
-  //     setToken(response.data.session)
-  //   })
-  //   .then(() => {})
-  //   .catch((error) => {
-  //     console.error(error)
-  //   })
-})
+onMounted(() => fetchPlayers(1))
 </script>

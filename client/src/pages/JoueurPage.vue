@@ -84,9 +84,7 @@ const rollDice = async () => {
     if (res.data.new_health !== undefined) currentPlayer.value.health = res.data.new_health
     if (res.data.new_mana !== undefined) currentPlayer.value.mana = res.data.new_mana
   } catch (error) {
-    console.error('Erreur rollDice:', error)
-  } finally {
-    isRolling.value = false
+    console.error(error)
   }
 }
 
@@ -294,6 +292,7 @@ onMounted(fetchData)
         <p v-else class="text-xs text-olive-jdr italic">
           Sélectionnez une compétence dans le grimoire...
         </p>
+        <p v-else class="text-xs text-olive-jdr italic">Sélectionnez une compétence...</p>
       </div>
     </div>
   </div>

@@ -292,7 +292,6 @@ onMounted(fetchData)
         <p v-else class="text-xs text-olive-jdr italic">
           Sélectionnez une compétence dans le grimoire...
         </p>
-        <p v-else class="text-xs text-olive-jdr italic">Sélectionnez une compétence...</p>
       </div>
     </div>
   </div>

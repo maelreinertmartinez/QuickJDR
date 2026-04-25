@@ -43,6 +43,7 @@ CREATE TABLE skills (
 
 CREATE TABLE character_skills (
     id bigint GENERATED ALWAYS AS IDENTITY,
+    character_id bigint NOT NULL,
     skill_id bigint NOT NULL,
     level integer DEFAULT 1,
     experience integer DEFAULT 0,

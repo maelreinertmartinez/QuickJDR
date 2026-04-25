@@ -30,6 +30,23 @@ class CharacterController implements Controller
                 }
                 break;
 
+            case "PATCH":
+                switch ($action) {
+                    case "health":
+                        $this->updateHealth($data);
+                        break;
+                    case "mana":
+                        $this->updateMana($data);
+                        break;
+                    case "armor":
+                        $this->updateArmor($data);
+                        break;
+                    default:
+                        http_response_code(404);
+                        echo json_encode(["error" => "Unknown action"]);
+                }
+                break;
+
             default:
                 http_response_code(405);
                 echo json_encode(["error" => "Method not allowed"]);
@@ -60,6 +77,42 @@ class CharacterController implements Controller
     private function getByParty(int $partyId): void
     {
         echo json_encode($this->gateway->getByParty($partyId));
+    }
+
+    private function updateHealth(array $data): void
+    {
+        if (empty($data["character_id"]) || !isset($data["value"])) {
+            http_response_code(400);
+            echo json_encode(["error" => "character_id and value are required"]);
+            return;
+        }
+
+        $result = $this->gateway->updateHealth((int)$data["character_id"], (int)$data["value"]);
+        echo json_encode($result);
+    }
+
+    private function updateMana(array $data): void
+    {
+        if (empty($data["character_id"]) || !isset($data["value"])) {
+            http_response_code(400);
+            echo json_encode(["error" => "character_id and value are required"]);
+            return;
+        }
+
+        $result = $this->gateway->updateMana((int)$data["character_id"], (int)$data["value"]);
+        echo json_encode($result);
+    }
+
+    private function updateArmor(array $data): void
+    {
+        if (empty($data["character_id"]) || !isset($data["value"])) {
+            http_response_code(400);
+            echo json_encode(["error" => "character_id and value are required"]);
+            return;
+        }
+
+        $result = $this->gateway->updateArmor((int)$data["character_id"], (int)$data["value"]);
+        echo json_encode($result);
     }
 
     public static function getBasePath(): string

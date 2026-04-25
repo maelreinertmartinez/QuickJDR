@@ -16,6 +16,7 @@ const routes = [
   { path: '/party/list', name: 'PartiesPage', component: PartiesPage },
   { path: '/MaitreJeuView', name: 'MaitreJeuView', component: MaitreJeuViewPage },
   { path: '/joueur', name: 'Joueur', component: JoueurPage },
+  { path: '/joueur', name: 'Joueur', component: JoueurPage },
 ]
 
 export default createRouter({

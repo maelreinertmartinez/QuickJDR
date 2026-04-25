@@ -2,8 +2,11 @@
 
 namespace QuickJDR\controllers;
 
+use QuickJDR\AuthContext;
+use QuickJDR\attributes\RequiresAuth;
 use QuickJDR\gateways\UserGateway;
 
+#[RequiresAuth]
 class UserController implements Controller
 {
     public function __construct(private UserGateway $gateway) {}
@@ -12,15 +15,8 @@ class UserController implements Controller
         string $method,
         string $action,
         array $data,
+        ?AuthContext $auth = null,
     ): void {
-        session_start();
-
-        if (!isset($_SESSION["user_id"])) {
-            http_response_code(401);
-            echo json_encode(["message" => "Not logged in"]);
-            return;
-        }
-
         switch ($action) {
             case "list":
                 if ($method === "GET") {

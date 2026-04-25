@@ -76,7 +76,7 @@ CREATE TABLE party (
 CREATE TABLE session (
     id bigint GENERATED ALWAYS AS IDENTITY,
     user_id bigint NOT NULL,
-    party_id bigint NOT NULL,
+    token varchar(64) NOT NULL,
     started_at timestamptz NOT NULL DEFAULT now(),
     ended_at timestamptz,
     PRIMARY KEY (id)

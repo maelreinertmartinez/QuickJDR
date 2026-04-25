@@ -19,6 +19,6 @@ class ControllerFactory
                 return new $controllerClass(...$gatewaysInstances);
             }
         }
-        echo json_encode(["error" => "Controller not found for path: $path"]);
+        return null;
     }
 }

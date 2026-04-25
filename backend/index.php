@@ -11,10 +11,13 @@ spl_autoload_register(function ($class_name) {
     include __DIR__ . "/src/" . $path . ".php";
 });
 
+use QuickJDR\AuthContext;
+use QuickJDR\AuthMiddleware;
 use QuickJDR\database\Database;
 use QuickJDR\controllers\ControllerFactory;
+use QuickJDR\gateways\SessionGateway;
+use QuickJDR\gateways\UserGateway;
 
-// CORS : autoriser le frontend sur localhost:5173
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -34,14 +37,30 @@ $database = new Database(
     $_ENV["DB_PASSWORD"],
 );
 
-$controller = ControllerFactory::createController(
-    $parts[1] ?? "",
-    $database->getConnection(),
-);
+$pdo = $database->getConnection();
+
+$authContext = null;
+$authHeader = $_SERVER["HTTP_AUTHORIZATION"] ?? "";
+if (str_starts_with($authHeader, "Bearer ")) {
+    $token = substr($authHeader, 7);
+    $session = (new SessionGateway($pdo))->getValidByToken($token);
+    if ($session) {
+        $roles = (new UserGateway($pdo))->getRolesByUserId($session["user_id"]);
+        $authContext = new AuthContext($session["user_id"], $roles);
+    }
+}
+
+$controller = ControllerFactory::createController($parts[1] ?? "", $pdo);
 
 if (!$controller) {
     http_response_code(404);
     echo json_encode(["error" => "Not Found"]);
+    exit();
+}
+
+$action = $parts[2] ?? "";
+
+if (!(new AuthMiddleware())->check($controller, $action, $authContext)) {
     exit();
 }
 
@@ -57,6 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "GET") {
 
 $controller->processRequest(
     $_SERVER["REQUEST_METHOD"],
-    $parts[2] ?? "",
+    $action,
     $data,
+    $authContext,
 );

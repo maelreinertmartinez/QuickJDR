@@ -6,6 +6,7 @@ use QuickJDR\controllers\PartyController;
 use QuickJDR\controllers\CharacterController;
 use QuickJDR\gateways\UserGateway;
 use QuickJDR\gateways\RoleGateway;
+use QuickJDR\gateways\SessionGateway;
 use QuickJDR\gateways\DiceGateway;
 use QuickJDR\gateways\PartyGateway;
 use QuickJDR\gateways\CharacterGateway;
@@ -15,7 +16,11 @@ use QuickJDR\gateways\SkillGateway;
 
 
 return [
-    AuthController::class => [UserGateway::class, RoleGateway::class],
+    AuthController::class => [
+        UserGateway::class,
+        RoleGateway::class,
+        SessionGateway::class,
+    ],
     DiceController::class => [DiceGateway::class],
     PartyController::class => [PartyGateway::class],
     CharacterController::class => [CharacterGateway::class],

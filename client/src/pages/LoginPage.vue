@@ -1,6 +1,6 @@
 <script setup>
 import axios from 'axios'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const username = ref('')
 const password = ref('')
@@ -10,16 +10,20 @@ const error = ref('Quelque chose a mal tourné...')
 const login = () => {
   axios
     .post('http://localhost:8000/auth/login', {
-      username: username.value,
-      password: password.value,
+      username: 'mael',
+      password: 'test',
     })
-    .then(() => {
-      // TODO: redirect to dashboard
+    .then((res) => {
+      console.log(res)
     })
     .catch((error) => {
       error.value = error.response.data.message
     })
 }
+
+onMounted(() => {
+  login()
+})
 </script>
 
 <template>

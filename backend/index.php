@@ -11,8 +11,8 @@ spl_autoload_register(function ($class_name) {
     include __DIR__ . "/src/" . $path . ".php";
 });
 
-use QuickJDR\AuthContext;
-use QuickJDR\AuthMiddleware;
+use QuickJDR\contexts\AuthContext;
+use QuickJDR\middlewares\AuthMiddleware;
 use QuickJDR\database\Database;
 use QuickJDR\controllers\ControllerFactory;
 use QuickJDR\gateways\SessionGateway;
@@ -43,9 +43,11 @@ $authContext = null;
 $authHeader = $_SERVER["HTTP_AUTHORIZATION"] ?? "";
 if (str_starts_with($authHeader, "Bearer ")) {
     $token = substr($authHeader, 7);
-    $session = (new SessionGateway($pdo))->getValidByToken($token);
+    $sessionGateway = new SessionGateway($pdo);
+    $session = $sessionGateway->getValidByToken($token);
     if ($session) {
-        $roles = (new UserGateway($pdo))->getRolesByUserId($session["user_id"]);
+        $userGateway = new UserGateway($pdo);
+        $roles = $userGateway->getRolesByUserId($session["user_id"]);
         $authContext = new AuthContext($session["user_id"], $roles);
     }
 }
@@ -60,7 +62,8 @@ if (!$controller) {
 
 $action = $parts[2] ?? "";
 
-if (!(new AuthMiddleware())->check($controller, $action, $authContext)) {
+$authMiddleware = new AuthMiddleware();
+if (!$authMiddleware->check($controller, $action, $authContext)) {
     exit();
 }
 

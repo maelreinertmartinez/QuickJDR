@@ -2,7 +2,7 @@
 
 namespace QuickJDR\controllers;
 
-use QuickJDR\AuthContext;
+use QuickJDR\contexts\AuthContext;
 
 interface Controller
 {

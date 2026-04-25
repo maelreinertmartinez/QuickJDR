@@ -1,14 +1,14 @@
-import { createRouter, createWebHistory } from 'vue-router'
 import LoginPage from '@/pages/LoginPage.vue'
+import MaitreJeuViewPage from '@/pages/MaitreJeuViewPage.vue'
 import PartiesPage from '@/pages/PartiesPage.vue'
 import RegisterPage from '@/pages/RegisterPage.vue'
-import MaitreJeuViewPage from '@/pages/MaitreJeuViewPage.vue'
+import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   { path: '/', name: 'Parties', component: PartiesPage },
   { path: '/login', name: 'Login', component: LoginPage },
   { path: '/register', name: 'Register', component: RegisterPage },
-  { path: '/MaitreJeuView', name: 'MaitreJeuView', component: MaitreJeuViewPage },
+  { path: '/gamemaster/dashboard', name: 'MaitreJeuView', component: MaitreJeuViewPage },
 ]
 
 export default createRouter({

@@ -26,6 +26,10 @@ const login = () => {
   <div>
     <!-- main container -->
     <div class="min-h-screen flex items-center justify-center flex-col">
+      <!-- if error -->
+      <div v-if="error" class="text-red-800 py-4 font-bold">
+        <p>{{ error }}</p>
+      </div>
       <!-- title -->
       <h1 class="text-2xl text-creamy-jdr mb-6 font-semibold">Se connecter</h1>
       <!-- main card -->
@@ -72,10 +76,6 @@ const login = () => {
       <!-- sub-title -->
       <div>
         <h2 class="mt-20 text-creamy-jdr">©Quick JDR</h2>
-      </div>
-      <!-- if error -->
-      <div v-if="error" class="text-red-800 py-4 font-bold">
-        <p>{{ error }}</p>
       </div>
     </div>
   </div>

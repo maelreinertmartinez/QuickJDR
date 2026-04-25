@@ -3,7 +3,6 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import StatBar from '@/components/StarBar.vue'
 
-// Configuration de l'URL de base et de l'API
 const apiUrl = 'http://localhost:8000'
 const api = axios.create({
   baseURL: apiUrl,
@@ -40,9 +39,9 @@ const fetchData = async () => {
     currentPlayer.value = {
       ...charRes.data,
       stats: mockStats,
-      level: charRes.data.level || 1,
+      armor: charRes.data.armor || 15,
+      max_armor: 20,
     }
-
     const skillsRes = await api.get('/skill/list')
     skills.value = skillsRes.data
   } catch (error) {
@@ -50,35 +49,21 @@ const fetchData = async () => {
   }
 }
 
-const selectSkill = (skill) => {
-  selectedSkill.value = skill
-  if (skill.dice_cost) diceType.value = skill.dice_cost
-}
-
-// Lancement de dé utilisant l'URL concaténée
-const rollDice = async () => {
-  if (!currentPlayer.value) return
-  isRolling.value = true
-  diceResult.value = null
-
+const sleep = async () => {
   try {
-    const payload = {
-      max_value: Number(diceType.value),
-      skill_id: selectedSkill.value ? selectedSkill.value.skill_id : null,
+    const res = await axios.post(
+      apiUrl + '/character/sleep',
+      {},
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      },
+    )
+    if (res.data) {
+      currentPlayer.value.health = res.data.new_health || currentPlayer.value.max_health
+      currentPlayer.value.mana = res.data.new_mana || currentPlayer.value.max_mana
     }
-
-    // Utilisation de apiUrl + path spécifique [cite: 18]
-    const res = await axios.post(apiUrl + '/dice/roll', payload, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-    })
-
-    diceResult.value = res.data.value
-    if (res.data.new_health !== undefined) currentPlayer.value.health = res.data.new_health
-    if (res.data.new_mana !== undefined) currentPlayer.value.mana = res.data.new_mana
   } catch (error) {
-    console.error('Erreur rollDice:', error)
-  } finally {
-    isRolling.value = false
+    console.error(error)
   }
 }
 
@@ -87,11 +72,32 @@ const modifyHealth = async (isDamage) => {
   try {
     const damageValue = isDamage ? healthModifier.value : -healthModifier.value
     const res = await api.post('/character/take-damage', { damage: damageValue })
-
     if (res.data.new_health !== undefined) currentPlayer.value.health = res.data.new_health
     healthModifier.value = 0
   } catch (error) {
-    console.error('Erreur modifyHealth:', error)
+    console.error(error)
+  }
+}
+
+const rollDice = async () => {
+  if (!currentPlayer.value) return
+  isRolling.value = true
+  diceResult.value = null
+  try {
+    const payload = {
+      max_value: Number(diceType.value),
+      skill_id: selectedSkill.value ? selectedSkill.value.skill_id : null,
+    }
+    const res = await axios.post(apiUrl + '/dice/roll', payload, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    })
+    diceResult.value = res.data.value
+    if (res.data.new_health !== undefined) currentPlayer.value.health = res.data.new_health
+    if (res.data.new_mana !== undefined) currentPlayer.value.mana = res.data.new_mana
+  } catch (error) {
+    console.error(error)
+  } finally {
+    isRolling.value = false
   }
 }
 
@@ -128,29 +134,51 @@ onMounted(() => fetchData())
           </div>
         </div>
       </div>
+
       <div
-        id="inventaire"
-        class="bg-green-jdr border-2 border-olive-jdr rounded-xl flex-1 shadow-md"
-      ></div>
+        class="bg-green-jdr border-2 border-olive-jdr rounded-xl p-4 shadow-md flex flex-col gap-3"
+      >
+        <div class="flex justify-between items-center">
+          <span class="text-lg font-black text-creamy-jdr uppercase">{{ currentPlayer.name }}</span>
+          <button
+            @click="sleep"
+            class="bg-orange-jdr hover:bg-brown-jdr text-creamy-jdr p-2 rounded-lg transition-colors"
+          >
+            <span class="text-xl">🛏️</span>
+          </button>
+        </div>
+        <StatBar
+          label="ARMURE"
+          v-model="currentPlayer.armor"
+          :max="currentPlayer.max_armor"
+          color="yellow"
+        />
+      </div>
     </div>
 
     <div class="column">
-      <div class="space-y-2">
-        <div class="text-center mb-1">
-          <h1 class="text-2xl font-black text-creamy-jdr uppercase tracking-tighter leading-none">
-            {{ currentPlayer.name }}
-          </h1>
-        </div>
-        <StatBar label="NIVEAU" v-model="currentPlayer.level" :max="20" color="yellow" />
+      <div class="space-y-2 text-center">
+        <h1 class="text-4xl font-black text-creamy-jdr uppercase tracking-tighter">
+          {{ currentPlayer.name }}
+        </h1>
 
         <div class="flex flex-col gap-2 p-2 bg-green-jdr border-2 border-olive-jdr rounded-xl">
+          <StatBar
+            label="MANA"
+            v-model="currentPlayer.mana"
+            :max="currentPlayer.max_mana"
+            color="blue"
+            readonly
+          />
+
           <StatBar
             label="VIE"
             v-model="currentPlayer.health"
             :max="currentPlayer.max_health"
             color="green"
+            readonly
           />
-          <div class="flex items-center justify-end gap-2 mb-2">
+          <div class="flex items-center justify-end gap-2 mt-1">
             <input
               type="number"
               v-model.number="healthModifier"
@@ -171,12 +199,6 @@ onMounted(() => fetchData())
               -
             </button>
           </div>
-          <StatBar
-            label="MANA"
-            v-model="currentPlayer.mana"
-            :max="currentPlayer.max_mana"
-            color="blue"
-          />
         </div>
       </div>
 
@@ -198,7 +220,7 @@ onMounted(() => fetchData())
       <button
         @click="rollDice"
         :disabled="isRolling"
-        class="h-14 bg-orange-jdr hover:bg-brown-jdr text-creamy-jdr font-bold uppercase rounded-xl transition-all active:scale-95 disabled:opacity-50 shadow-md border border-olive-jdr/50"
+        class="h-14 bg-orange-jdr hover:bg-brown-jdr text-creamy-jdr font-bold uppercase rounded-xl shadow-md border border-olive-jdr/50 transition-all active:scale-95"
       >
         {{ isRolling ? 'Lancement...' : 'Lancer le dé' }}
       </button>
@@ -209,7 +231,7 @@ onMounted(() => fetchData())
         <span class="text-xs font-bold text-creamy-jdr uppercase tracking-widest">Type de dé</span>
         <select
           v-model="diceType"
-          class="bg-dark-green-jdr text-creamy-jdr rounded-lg px-2 py-1 outline-none border border-olive-jdr text-sm"
+          class="bg-dark-green-jdr text-creamy-jdr rounded-lg px-2 py-1 border border-olive-jdr outline-none"
         >
           <option v-for="d in [4, 6, 8, 10, 12, 20, 100]" :key="d" :value="d">D{{ d }}</option>
         </select>
@@ -229,26 +251,19 @@ onMounted(() => fetchData())
           <div
             v-for="skill in skills"
             :key="skill.skill_id"
-            @click="selectSkill(skill)"
+            @click="selectedSkill = skill"
             :class="{
               'bg-dark-green-jdr border-creamy-jdr/50': selectedSkill?.skill_id === skill.skill_id,
             }"
-            class="flex items-center gap-3 py-2 px-2 hover:bg-dark-green-jdr/60 rounded-lg cursor-pointer transition-all border border-transparent"
+            class="flex items-center gap-3 py-2 px-2 hover:bg-dark-green-jdr/60 rounded-lg cursor-pointer border border-transparent transition-all"
           >
             <span class="text-sm font-medium text-creamy-jdr flex-1 truncate">{{
               skill.label
             }}</span>
-            <div class="flex gap-4 items-center">
-              <span class="w-8 text-center text-blue-400 text-sm font-bold">{{
-                skill.mana_cost
-              }}</span>
-              <span class="w-8 text-center text-red-400 text-sm font-bold">{{
-                skill.damage || '-'
-              }}</span>
-              <span class="w-8 text-right text-creamy-jdr/60 text-xs italic"
-                >D{{ skill.dice_cost }}</span
-              >
-            </div>
+            <span class="text-blue-400 text-xs font-bold">{{ skill.mana_cost }} MP</span>
+            <span class="text-red-400 text-xs font-bold">{{ skill.dice_cost }} Cout </span>
+            <span class="text-yellow-400 text-xs font-bold">{{ skill.healing }} healing </span>
+            <span class="text-red-400 text-xs font-bold">{{ skill.damage }} damage </span>
           </div>
         </div>
       </div>
@@ -261,6 +276,7 @@ onMounted(() => fetchData())
         <p v-if="selectedSkill" class="text-sm text-creamy-jdr leading-relaxed italic">
           {{ selectedSkill.description }}
         </p>
+        <p v-else class="text-xs text-olive-jdr italic">Sélectionnez une compétence...</p>
       </div>
     </div>
   </div>

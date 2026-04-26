@@ -1,34 +1,34 @@
-# QuickJDR API Documentation
+# Documentation API QuickJDR
 
-## Base URL
+## URL de base
 ```
 http://localhost:8000
 ```
 
-## Authentication
-All routes except `/auth/register` and `/auth/login` require a Bearer token in the request headers:
+## Authentification
+Toutes les routes sauf `/auth/register` et `/auth/login` nécessitent un token Bearer dans les headers :
 ```
-Authorization: Bearer <your_token>
+Authorization: Bearer <votre_token>
 ```
-The token is returned on login or register.
+Le token est retourné lors du login ou de l'inscription.
 
 ---
 
-## Auth Routes
-All auth routes use `x-www-form-urlencoded` body.
+## Routes Auth
+Toutes les routes auth utilisent un body `x-www-form-urlencoded`.
 
-### Register
+### Inscription
 ```
 POST /auth/register
 ```
-| Field | Type | Required |
-|-------|------|----------|
+| Champ | Type | Requis |
+|-------|------|--------|
 | username | string | ✅ |
 | password | string | ✅ |
 | confirm_password | string | ✅ |
 | as_game_master | boolean | ❌ |
 
-Response:
+Réponse :
 ```json
 {
     "message": "Registration successful",
@@ -38,16 +38,16 @@ Response:
 }
 ```
 
-### Login
+### Connexion
 ```
 POST /auth/login
 ```
-| Field | Type | Required |
-|-------|------|----------|
+| Champ | Type | Requis |
+|-------|------|--------|
 | username | string | ✅ |
 | password | string | ✅ |
 
-Response:
+Réponse :
 ```json
 {
     "message": "Login successful",
@@ -57,21 +57,21 @@ Response:
 }
 ```
 
-### Logout
+### Déconnexion
 ```
 POST /auth/logout
 ```
 
 ---
 
-## Party Routes
-Requires Bearer token. Create party requires `game_master` role.
+## Routes Party
+Nécessite un token Bearer. La création de party nécessite le rôle `game_master`.
 
-### Create party
+### Créer une party
 ```
 POST /party/create
 ```
-Response:
+Réponse :
 ```json
 {
     "message": "Party created",
@@ -79,22 +79,22 @@ Response:
 }
 ```
 
-### List all parties
+### Lister toutes les parties
 ```
 GET /party/list
 ```
-Response:
+Réponse :
 ```json
 [
     {"id": 1, "mj_id": 1}
 ]
 ```
 
-### Get players in a party
+### Récupérer les joueurs d'une party
 ```
 GET /party/players?id={party_id}
 ```
-Response:
+Réponse :
 ```json
 [
     {
@@ -112,46 +112,46 @@ Response:
 
 ---
 
-## Character Routes
-Requires Bearer token. All bodies are JSON.
+## Routes Personnages
+Nécessite un token Bearer. Tous les bodies sont en JSON.
 
-### Create character
+### Créer un personnage
 ```
 POST /characters
 ```
-| Field | Type | Required |
-|-------|------|----------|
+| Champ | Type | Requis |
+|-------|------|--------|
 | party_id | int | ✅ |
 | name | string | ✅ |
 | health | int | ✅ |
 | max_health | int | ✅ |
 | max_mana | int | ✅ |
 
-Response:
+Réponse :
 ```json
 {"id": 1}
 ```
 
-### Get character by id
+### Récupérer un personnage par id
 ```
 GET /characters/{id}
 ```
 
-### Get characters by party
+### Récupérer les personnages d'une party
 ```
 GET /characters?party_id={party_id}
 ```
 
-### Update health
+### Mettre à jour la vie
 ```
 PATCH /characters/health
 ```
-| Field | Type | Required |
-|-------|------|----------|
+| Champ | Type | Requis |
+|-------|------|--------|
 | character_id | int | ✅ |
-| value | int (+ or -) | ✅ |
+| value | int (+ ou -) | ✅ |
 
-Response:
+Réponse :
 ```json
 {
     "character_id": 1,
@@ -159,16 +159,16 @@ Response:
 }
 ```
 
-### Update mana
+### Mettre à jour le mana
 ```
 PATCH /characters/mana
 ```
-| Field | Type | Required |
-|-------|------|----------|
+| Champ | Type | Requis |
+|-------|------|--------|
 | character_id | int | ✅ |
-| value | int (+ or -) | ✅ |
+| value | int (+ ou -) | ✅ |
 
-Response:
+Réponse :
 ```json
 {
     "character_id": 1,
@@ -176,16 +176,16 @@ Response:
 }
 ```
 
-### Update armor
+### Mettre à jour l'armure
 ```
 PATCH /characters/armor
 ```
-| Field | Type | Required |
-|-------|------|----------|
+| Champ | Type | Requis |
+|-------|------|--------|
 | character_id | int | ✅ |
-| value | int (+ or -) | ✅ |
+| value | int (+ ou -) | ✅ |
 
-Response:
+Réponse :
 ```json
 {
     "character_id": 1,
@@ -195,15 +195,15 @@ Response:
 
 ---
 
-## Skills Routes
-Requires Bearer token. All bodies are JSON.
+## Routes Compétences
+Nécessite un token Bearer. Tous les bodies sont en JSON.
 
-### Create skill
+### Créer une compétence
 ```
 POST /skills/create
 ```
-| Field | Type | Required |
-|-------|------|----------|
+| Champ | Type | Requis |
+|-------|------|--------|
 | label | string | ✅ |
 | description | string | ✅ |
 | mana_cost | int | ✅ |
@@ -211,26 +211,26 @@ POST /skills/create
 | damage | int | ❌ |
 | healing | int | ❌ |
 
-Response:
+Réponse :
 ```json
 {"id": 1}
 ```
 
-### List all skills
+### Lister toutes les compétences
 ```
 GET /skills/list
 ```
 
-### Assign skill to character
+### Assigner une compétence à un personnage
 ```
 POST /skills/assign
 ```
-| Field | Type | Required |
-|-------|------|----------|
+| Champ | Type | Requis |
+|-------|------|--------|
 | character_id | int | ✅ |
 | skill_id | int | ✅ |
 
-Response:
+Réponse :
 ```json
 {
     "message": "Skill assigned to character",
@@ -238,16 +238,16 @@ Response:
 }
 ```
 
-### Get skills of a character
+### Récupérer les compétences d'un personnage
 ```
 GET /skills/character?character_id={character_id}
 ```
-Response:
+Réponse :
 ```json
 [
     {
         "id": 1,
-        "label": "Fireball",
+        "label": "Boule de feu",
         "description": "Lance une boule de feu",
         "mana_cost": 10,
         "healing": null,
@@ -259,14 +259,14 @@ Response:
 
 ---
 
-## Users Routes
-Requires Bearer token.
+## Routes Utilisateurs
+Nécessite un token Bearer.
 
-### List all users
+### Lister tous les utilisateurs
 ```
 GET /users/list
 ```
-Response:
+Réponse :
 ```json
 [
     {"id": 1, "username": "admin"},
@@ -276,19 +276,19 @@ Response:
 
 ---
 
-## Dice Routes
-Requires Bearer token. Body is JSON.
+## Routes Dés
+Nécessite un token Bearer. Body en JSON.
 
-### Launch dice for a character
+### Lancer un dé pour un personnage
 ```
 POST /dice/launch
 ```
-| Field | Type | Required |
-|-------|------|----------|
+| Champ | Type | Requis |
+|-------|------|--------|
 | character_id | int | ✅ |
 | max_value | int | ✅ |
 
-Response:
+Réponse :
 ```json
 {
     "message": "Dice launched",
@@ -296,15 +296,15 @@ Response:
 }
 ```
 
-### Roll blank dice
+### Lancer un dé sans personnage
 ```
 POST /dice/roll/blank
 ```
-| Field | Type | Required |
-|-------|------|----------|
+| Champ | Type | Requis |
+|-------|------|--------|
 | max_value | int | ✅ |
 
-Response:
+Réponse :
 ```json
 {
     "value": 3

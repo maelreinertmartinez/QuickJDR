@@ -1,5 +1,17 @@
 # Documentation API QuickJDR
 
+## Image Docker
+
+### Construction
+```bash
+docker build -t quickjdr-backend ./backend
+```
+
+### Lancement
+```bash
+docker run -p 8000:8000 quickjdr-backend
+```
+
 ## URL de base
 ```
 http://localhost:8000
@@ -34,7 +46,7 @@ Réponse :
     "message": "Registration successful",
     "username": "testdm",
     "session": "<token>",
-    "roles": [{"label": "game_master"}]
+    "roles": ["game_master"]
 }
 ```
 
@@ -53,7 +65,7 @@ Réponse :
     "message": "Login successful",
     "username": "testdm",
     "session": "<token>",
-    "roles": [{"label": "game_master"}]
+    "roles": ["game_master"]
 }
 ```
 

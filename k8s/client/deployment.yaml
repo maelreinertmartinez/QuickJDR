@@ -14,10 +14,10 @@ spec:
     spec:
       containers:
         - name: client
-          image: quickjdr-client
+          image: quickjdr-client:prod
           imagePullPolicy: Never
           env:
             - name: VITE_API_URL
-              value: http://backend:8000
+              value: http://localhost:8000
           ports:
-            - containerPort: 5173
+            - containerPort: 80

@@ -15,13 +15,13 @@ minikube start --driver=docker
 ### 2. Construire les images Docker
 ```bash
 docker build -t quickjdr-backend ./backend
-docker build -t quickjdr-client ./client
+docker build --target prod -t quickjdr-client:prod ./client
 ```
 
 ### 3. Charger les images dans Minikube
 ```bash
 minikube image load quickjdr-backend
-minikube image load quickjdr-client
+minikube image load quickjdr-client:prod
 ```
 
 ### 4. Déployer la base de données
@@ -33,7 +33,7 @@ kubectl apply -f k8s/database/service-db.yaml
 ### 5. Déployer le backend
 ```bash
 kubectl apply -f k8s/backend/deployment.yaml
-kubectl apply -f k8s/backend/service-web.yaml
+kubectl apply -f k8s/backend/service-api.yaml
 ```
 
 ### 6. Déployer le client
@@ -80,8 +80,8 @@ L'application sera accessible sur:
 ### Client
 | Paramètre | Valeur |
 |-----------|--------|
-| VITE_API_URL | http://backend:8000 |
-| Port | 5173 |
+| VITE_API_URL | http://localhost:8000 |
+| Port | 80 |
 
 ## Adapter pour un autre environnement
 Pour changer la configuration, modifier les variables d'environnement dans les fichiers `deployment.yaml` correspondants.

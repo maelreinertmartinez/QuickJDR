@@ -8,7 +8,7 @@ const routes = [
   {
     path: '/',
     redirect: () =>
-      hasToken() ? (hasRole('gamemaster') ? '/gamemaster/dashboard' : '/dashboard') : '/login',
+      hasToken() ? (hasRole('game_master') ? '/gamemaster/dashboard' : '/dashboard') : '/login',
   },
   { path: '/login', name: 'Login', component: LoginPage },
   { path: '/register', name: 'Register', component: RegisterPage },

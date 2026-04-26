@@ -1,6 +1,9 @@
 <script setup>
 import axios from 'axios'
 import { ref } from 'vue'
+import { setToken, setRoles } from '@/utils/api'
+
+const error = ref(null)
 
 const username = ref('')
 const password = ref('')
@@ -17,11 +20,14 @@ const register = () => {
 
   axios
     .post('http://localhost:8000/auth/register', data)
-    .then((response) => {
-      console.log(response.data)
+    .then((res) => {
+      error.value = null
+      setToken(res.data.session)
+      setRoles(res.data.roles)
+      window.location.href = '/'
     })
-    .catch((error) => {
-      console.error(error.message)
+    .catch((err) => {
+      error.value = err.response.data.message
     })
 }
 </script>
@@ -29,6 +35,10 @@ const register = () => {
 <template>
   <!-- main container -->
   <div class="min-h-screen flex items-center justify-center flex-col">
+    <!-- if error -->
+    <div v-if="error" class="text-red-800 py-4 font-bold">
+      <p>{{ error }}</p>
+    </div>
     <!-- title -->
     <h1 class="text-2xl text-creamy-jdr mb-6 font-semibold">S'inscrire</h1>
     <!-- main card -->
@@ -86,7 +96,7 @@ const register = () => {
           Commencez votre Aventure
         </button>
         <!-- link to login page -->
-        <a href="" class="mt-2 text-creamy-jdr text-center text-xs hover:text-orange-jdr"
+        <a href="/login" class="mt-2 text-creamy-jdr text-center text-xs hover:text-orange-jdr"
           >Déjà aventurier ?</a
         >
       </form>

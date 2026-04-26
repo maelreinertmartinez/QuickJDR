@@ -83,12 +83,16 @@ class AuthController implements Controller
         $token = bin2hex(random_bytes(32));
         $this->sessions->create($user["id"], $token);
 
+        $roles = $this->users->getRolesByUsername($data["username"]);
+
         http_response_code(201);
         echo json_encode([
             "message" => "Registration successful",
             "username" => $user["username"],
             "session" => $token,
-            "roles" => $this->users->getRolesByUsername($data["username"]),
+            "roles" => array_map(function ($role) {
+                return $role["label"];
+            }, $roles),
         ]);
     }
 

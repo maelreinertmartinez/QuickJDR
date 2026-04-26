@@ -40,8 +40,8 @@ const clearRoles = () => {
 }
 
 const hasRole = (role) => {
-  return VueCookies.get('session_roles').split(',').includes(role)
+  return VueCookies.get('session_roles')?.split(',').includes(role)
 }
 
-export { setToken, clearToken, hasToken, setRoles, hasRole, clearRoles }
+export { clearRoles, clearToken, hasRole, hasToken, setRoles, setToken }
 export default api

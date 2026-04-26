@@ -19,6 +19,7 @@ CREATE TABLE characters (
     health integer NOT NULL,
     max_health integer NOT NULL,
     armor integer DEFAULT 0,
+    max_armor integer NOT NULL,
     mana integer DEFAULT 0,
     max_mana integer NOT NULL,
     level integer DEFAULT 1,

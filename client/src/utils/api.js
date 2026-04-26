@@ -1,10 +1,15 @@
 import axios from 'axios'
 import VueCookies from 'vue-cookies'
 
+// Check if the user has a session token (called before making authenticated requests)
+const hasToken = () => {
+  return VueCookies.isKey('session_token')
+}
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000,
-  ...(VueCookies.isKey('session_token')
+  ...(hasToken()
     ? {
         headers: {
           Authorization: `Bearer ${VueCookies.get('session_token')}`,
@@ -22,8 +27,21 @@ const setToken = (token) => {
 // Clear the Authorization header of the API (called when the user logs out)
 const clearToken = () => {
   VueCookies.remove('session_token')
+  VueCookies.remove('session_roles')
   delete api.defaults.headers.common['Authorization']
 }
 
-export { setToken, clearToken }
+const setRoles = (roles) => {
+  VueCookies.set('session_roles', roles.join(','), '1d')
+}
+
+const clearRoles = () => {
+  VueCookies.remove('session_roles')
+}
+
+const hasRole = (role) => {
+  return VueCookies.get('session_roles').split(',').includes(role)
+}
+
+export { setToken, clearToken, hasToken, setRoles, hasRole, clearRoles }
 export default api

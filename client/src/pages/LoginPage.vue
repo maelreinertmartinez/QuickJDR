@@ -1,29 +1,29 @@
 <script setup>
 import axios from 'axios'
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
+import { setToken, setRoles } from '@/utils/api'
 
 const username = ref('')
 const password = ref('')
 
-const error = ref('Quelque chose a mal tourné...')
+const error = ref(null)
 
 const login = () => {
   axios
     .post('http://localhost:8000/auth/login', {
-      username: 'mael',
-      password: 'test',
+      username: username.value,
+      password: password.value,
     })
     .then((res) => {
-      console.log(res)
+      error.value = null
+      setToken(res.data.session)
+      setRoles(res.data.roles)
+      window.location.href = '/'
     })
-    .catch((error) => {
-      error.value = error.response.data.message
+    .catch((err) => {
+      error.value = err.response.data.message
     })
 }
-
-onMounted(() => {
-  login()
-})
 </script>
 
 <template>
@@ -66,13 +66,13 @@ onMounted(() => {
           </div>
           <!-- button -->
           <button
-            type="submit"
+            :onclick="login"
             class="mt-4 mb-2 bg-orange-jdr text-creamy-jdr px-1 py-2 rounded-lg hover:bg-brown-jdr"
           >
             Reprendre votre Aventure
           </button>
           <!-- link to register page -->
-          <a href="" class="mt-2 text-creamy-jdr text-center text-xs hover:text-orange-jdr"
+          <a href="/register" class="mt-2 text-creamy-jdr text-center text-xs hover:text-orange-jdr"
             >Pas encore aventurier ?</a
           >
         </form>

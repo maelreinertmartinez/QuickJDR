@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import api from '@/utils/api'
 import StatBar from '@/components/StarBar.vue'
 
 const apiUrl = 'http://localhost:8000'
@@ -145,7 +145,7 @@ onMounted(() => fetchData())
             @click="sleep"
             class="bg-orange-jdr hover:bg-brown-jdr text-creamy-jdr p-2 rounded-lg transition-colors"
           >
-            <span class="text-xl">🛏️</span>
+            🛏️
           </button>
         </div>
         <StatBar
@@ -162,7 +162,6 @@ onMounted(() => fetchData())
         <h1 class="text-4xl font-black text-creamy-jdr uppercase tracking-tighter">
           {{ currentPlayer.name }}
         </h1>
-
         <div class="flex flex-col gap-2 p-2 bg-green-jdr border-2 border-olive-jdr rounded-xl">
           <StatBar
             label="MANA"
@@ -183,9 +182,7 @@ onMounted(() => fetchData())
             <input
               type="number"
               v-model.number="healthModifier"
-              min="0"
-              placeholder="0"
-              class="w-16 bg-dark-green-jdr text-creamy-jdr border border-olive-jdr rounded-lg px-2 py-1 text-center outline-none focus:border-creamy-jdr"
+              class="w-16 bg-dark-green-jdr text-creamy-jdr border border-olive-jdr rounded-lg px-2 py-1 text-center outline-none"
             />
             <button
               @click="modifyHealth(false)"
@@ -245,11 +242,10 @@ onMounted(() => fetchData())
       >
         <span class="text-xs font-bold text-creamy-jdr uppercase tracking-widest">Grimoire</span>
       </div>
-
       <div
         class="box-grow bg-green-jdr border-2 border-olive-jdr shadow-inner rounded-xl p-4 overflow-y-auto"
       >
-        <div v-if="skills && skills.length > 0" class="space-y-1">
+        <div v-if="skills.length > 0" class="space-y-1">
           <div
             v-for="skill in skills"
             :key="skill.skill_id"

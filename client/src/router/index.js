@@ -3,8 +3,9 @@ import MaitreJeuViewPage from '@/pages/MaitreJeuViewPage.vue'
 import PartiesPage from '@/pages/PartiesPage.vue'
 import RegisterPage from '@/pages/RegisterPage.vue'
 import { createRouter, createWebHistory } from 'vue-router'
-
 import JoueurPage from '@/pages/JoueurPage.vue'
+
+
 
 const routes = [
   { path: '/', name: 'Parties', component: PartiesPage },

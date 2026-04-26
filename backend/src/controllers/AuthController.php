@@ -90,9 +90,7 @@ class AuthController implements Controller
             "message" => "Registration successful",
             "username" => $user["username"],
             "session" => $token,
-            "roles" => array_map(function ($role) {
-                return $role["label"];
-            }, $roles),
+            "roles" => array_map(fn($role) => $role["label"], $roles),
         ]);
     }
 
@@ -116,12 +114,13 @@ class AuthController implements Controller
 
         $token = bin2hex(random_bytes(32));
         $this->sessions->create($user["id"], $token);
+        $roles = $this->users->getRolesByUsername($user["username"]);
 
         http_response_code(200);
         echo json_encode([
             "message" => "Login successful",
             "username" => $user["username"],
-            "roles" => $this->users->getRolesByUsername($user["username"]),
+            "roles" => array_map(fn($role) => $role["label"], $roles),
             "session" => $token,
         ]);
     }

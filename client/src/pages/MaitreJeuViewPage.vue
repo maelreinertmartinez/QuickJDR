@@ -69,6 +69,7 @@ import PlayerDetail from '@/components/PlayerDetail.vue'
 import DiceRoller from '@/components/DiceRoller.vue'
 import DiceHistory from '@/components/DiceHistory.vue'
 import { usePlayers } from '@/composables/usePlayers'
+import api, { setToken } from '@/utils/api'
 
 const { players, loading, error, fetchPlayers } = usePlayers()
 const selectedId = ref(null)
@@ -98,4 +99,25 @@ function onRoll(result) {
 }
 
 onMounted(fetchPlayers)
+
+onMounted(() => {
+  api
+    .get('/party/list')
+    .then((response) => {
+      console.log(response.data)
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+  // api
+  //   .post('/auth/login', { username: 'mael', password: 'test' })
+  //   .then((response) => {
+  //     console.log(response.data)
+  //     setToken(response.data.session)
+  //   })
+  //   .then(() => {})
+  //   .catch((error) => {
+  //     console.error(error)
+  //   })
+})
 </script>

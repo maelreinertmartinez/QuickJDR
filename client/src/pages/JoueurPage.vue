@@ -563,10 +563,11 @@ onMounted(fetchData)
       >
         <span class="text-xs font-black text-creamy-jdr uppercase tracking-widest">Grimoire</span>
       </div>
+
       <div
-        class="box-grow bg-green-jdr border-2 border-olive-jdr shadow-inner rounded-xl p-4 overflow-y-auto"
+        class="box-grow bg-green-jdr border-2 border-olive-jdr shadow-inner rounded-xl p-4 overflow-y-auto max-h-[450px]"
       >
-        <div class="space-y-1">
+        <div v-if="skills && skills.length > 0" class="space-y-1">
           <div
             v-for="skill in skills"
             :key="skill.skill_id"
@@ -583,6 +584,13 @@ onMounted(fetchData)
             <span class="text-yellow-400 text-xs font-black">{{ skill.healing }} Soin</span>
             <span class="text-red-400 text-xs font-black">{{ skill.damage }} Dégat</span>
           </div>
+        </div>
+
+        <div v-else class="flex flex-col items-center justify-center h-full opacity-40">
+          
+          <p class="text-xs text-creamy-jdr font-bold uppercase tracking-widest text-center">
+
+          </p>
         </div>
       </div>
       <div

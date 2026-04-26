@@ -1,5 +1,5 @@
 <script setup>
-import api, { hasToken, clearToken, clearRoles } from '@/utils/api'
+import api, { clearRoles, clearToken, hasToken } from '@/utils/api'
 
 if (
   !hasToken() &&
@@ -21,10 +21,10 @@ const logout = () => {
 <template>
   <button
     v-if="hasToken()"
-    class="absolute right-4 top-4 bg-[#9a6422] py-1 px-2 rounded-[5px] text-[#f5e0a0]"
+    class="absolute right-4 top-4 bg-orange-jdr text-creamy-jdr px-3 py-2 rounded-lg hover:bg-brown-jdr"
     @click="logout"
   >
-    Logout
+    Déconnexion
   </button>
   <router-view />
 </template>

@@ -3,13 +3,6 @@ import { ref, onMounted } from 'vue'
 import api from '@/utils/api'
 import StatBar from '@/components/StarBar.vue'
 
-const apiUrl = 'http://localhost:8000'
-const api = axios.create({
-  baseURL: apiUrl,
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem('token')}`,
-  },
-})
 
 const currentPlayer = ref(null)
 const skills = ref([])
@@ -18,6 +11,7 @@ const diceResult = ref(null)
 const diceType = ref(20)
 const isRolling = ref(false)
 const healthModifier = ref(0)
+const errorMessage = ref(null)
 
 const mockStats = [
   { short: 'FOR', name: 'Force', value: 10 },
@@ -33,19 +27,25 @@ const calculateModifier = (val) => {
   return mod >= 0 ? `+${mod}` : mod
 }
 
+const handleApiError = (error) => {
+  errorMessage.value = error.response?.data?.error || 'Erreur de communication avec le grimoire.'
+  setTimeout(() => (errorMessage.value = null), 5000)
+}
 const fetchData = async () => {
   try {
-    const charRes = await api.get('/character')
+
+    const charRes = await api.get('/character/1')
+
     currentPlayer.value = {
       ...charRes.data,
       stats: mockStats,
-      armor: charRes.data.armor || 15,
-      max_armor: 20,
+      max_armor: 20
     }
+
     const skillsRes = await api.get('/skill/list')
-    skills.value = skillsRes.data
-  } catch (error) {
-    console.error('Erreur fetchData:', error)
+    skills.value = Array.isArray(skillsRes.data) ? skillsRes.data : []
+  } catch (e) {
+    handleApiError(e)
   }
 }
 
@@ -102,16 +102,23 @@ const rollDice = async () => {
   }
 }
 
-onMounted(() => fetchData())
+onMounted(fetchData)
 </script>
 
 <template>
   <div class="layout-container" v-if="currentPlayer">
-    <div class="column">
+    <Transition name="fade">
       <div
-        class="bg-green-jdr border-2 border-olive-jdr rounded-xl p-4 flex-1 overflow-y-auto shadow-md"
+        v-if="errorMessage"
+        class="absolute top-5 right-5 z-50 bg-red-600 border-2 border-white text-white px-6 py-3 rounded-lg shadow-2xl font-bold"
       >
-        <p class="text-xs font-medium text-creamy-jdr uppercase tracking-widest mb-4">
+        ⚠️ {{ errorMessage }}
+      </div>
+    </Transition>
+
+    <div class="column">
+      <div class="bg-green-jdr border-2 border-olive-jdr rounded-xl p-4 flex-1 overflow-y-auto">
+        <p class="text-xs font-black text-creamy-jdr uppercase tracking-widest mb-4">
           Caractéristiques
         </p>
         <div class="space-y-2">
@@ -186,13 +193,13 @@ onMounted(() => fetchData())
             />
             <button
               @click="modifyHealth(false)"
-              class="bg-orange-jdr hover:bg-brown-jdr text-creamy-jdr w-8 h-8 rounded-lg font-bold transition-colors"
+              class="bg-orange-jdr text-creamy-jdr w-8 h-8 rounded-lg font-bold"
             >
               +
             </button>
             <button
               @click="modifyHealth(true)"
-              class="bg-orange-jdr hover:bg-brown-jdr text-creamy-jdr w-8 h-8 rounded-lg font-bold transition-colors"
+              class="bg-orange-jdr text-creamy-jdr w-8 h-8 rounded-lg font-bold"
             >
               -
             </button>
@@ -201,35 +208,31 @@ onMounted(() => fetchData())
       </div>
 
       <div
-        class="box-grow bg-green-jdr border-2 border-olive-jdr shadow-md rounded-xl flex flex-col items-center justify-center relative overflow-hidden"
+        class="box-grow bg-green-jdr border-2 border-olive-jdr shadow-2xl rounded-xl flex flex-col items-center justify-center relative"
       >
-        <div v-if="isRolling" class="text-5xl animate-bounce">🎲</div>
+        <div v-if="isRolling" class="text-6xl animate-bounce">🎲</div>
         <div v-else-if="diceResult !== null" class="flex flex-col items-center">
-          <span class="text-creamy-jdr/60 text-[10px] uppercase font-bold"
-            >Résultat D{{ diceType }}</span
-          >
-          <span class="text-7xl font-black text-creamy-jdr">{{ diceResult }}</span>
+          <span class="text-creamy-jdr/60 text-[10px] uppercase font-bold">D{{ diceType }}</span>
+          <span class="text-8xl font-black text-creamy-jdr">{{ diceResult }}</span>
         </div>
-        <span v-else class="text-olive-jdr font-bold uppercase text-xs tracking-widest"
-          >Prêt à lancer</span
-        >
+        <span v-else class="text-olive-jdr font-bold uppercase text-xs tracking-widest">Prêt</span>
       </div>
 
       <button
         @click="rollDice"
         :disabled="isRolling"
-        class="h-14 bg-orange-jdr hover:bg-brown-jdr text-creamy-jdr font-bold uppercase rounded-xl shadow-md border border-olive-jdr/50 transition-all active:scale-95"
+        class="h-16 bg-orange-jdr hover:bg-brown-jdr text-creamy-jdr font-black text-xl uppercase rounded-xl shadow-xl border-b-4 border-brown-jdr active:border-b-0"
       >
         {{ isRolling ? 'Lancement...' : 'Lancer le dé' }}
       </button>
 
       <div
-        class="bg-green-jdr border-2 border-olive-jdr shadow-md rounded-xl p-3 flex items-center justify-between"
+        class="bg-green-jdr border-2 border-olive-jdr rounded-xl p-3 flex items-center justify-between"
       >
-        <span class="text-xs font-bold text-creamy-jdr uppercase tracking-widest">Type de dé</span>
+        <span class="text-xs font-bold text-creamy-jdr uppercase">Dé</span>
         <select
           v-model="diceType"
-          class="bg-dark-green-jdr text-creamy-jdr rounded-lg px-2 py-1 border border-olive-jdr outline-none"
+          class="bg-dark-green-jdr text-creamy-jdr rounded-lg px-3 py-1 border border-olive-jdr"
         >
           <option v-for="d in [4, 6, 8, 10, 12, 20, 100]" :key="d" :value="d">D{{ d }}</option>
         </select>
@@ -237,13 +240,11 @@ onMounted(() => fetchData())
     </div>
 
     <div class="column">
-      <div
-        class="h-12 bg-green-jdr border-2 border-olive-jdr shadow-md rounded-xl flex items-center px-4"
-      >
-        <span class="text-xs font-bold text-creamy-jdr uppercase tracking-widest">Grimoire</span>
+      <div class="h-12 bg-green-jdr border-2 border-olive-jdr rounded-xl flex items-center px-4">
+        <span class="text-xs font-black text-creamy-jdr uppercase tracking-widest">Grimoire</span>
       </div>
       <div
-        class="box-grow bg-green-jdr border-2 border-olive-jdr shadow-inner rounded-xl p-4 overflow-y-auto"
+        class="box-grow bg-green-jdr border-2 border-olive-jdr rounded-xl p-4 overflow-y-auto max-h-[450px]"
       >
         <div v-if="skills.length > 0" class="space-y-1">
           <div
@@ -253,15 +254,13 @@ onMounted(() => fetchData())
             :class="{
               'bg-dark-green-jdr border-creamy-jdr/50': selectedSkill?.skill_id === skill.skill_id,
             }"
-            class="flex items-center gap-3 py-2 px-2 hover:bg-dark-green-jdr/60 rounded-lg cursor-pointer border border-transparent transition-all"
+            class="flex items-center gap-3 py-3 px-3 hover:bg-dark-green-jdr/40 rounded-lg cursor-pointer border border-transparent transition-all"
           >
-            <span class="text-sm font-medium text-creamy-jdr flex-1 truncate">{{
-              skill.label
-            }}</span>
-            <span class="text-blue-400 text-xs font-bold">{{ skill.mana_cost }} MP</span>
-            <span class="text-red-400 text-xs font-bold">{{ skill.dice_cost }} Cout </span>
-            <span class="text-yellow-400 text-xs font-bold">{{ skill.healing }} healing </span>
-            <span class="text-red-400 text-xs font-bold">{{ skill.damage }} damage </span>
+            <span class="text-sm font-bold text-creamy-jdr flex-1 truncate">{{ skill.label }}</span>
+            <span class="text-blue-400 text-xs font-black">{{ skill.mana_cost }} MP</span>
+            <span class="text-blue-400 text-xs font-black">{{ skill.healing }} Soin</span>
+            <span class="text-blue-400 text-xs font-black">{{ skill.damage }} Dégat</span>
+            <span class="text-blue-400 text-xs font-black">{{ skill.dice_cost }} Cout</span>
           </div>
         </div>
 
@@ -271,17 +270,17 @@ onMounted(() => fetchData())
 
           </p>
         </div>
+        <p v-else class="text-xs text-olive-jdr italic text-center mt-10">Grimoire vide...</p>
       </div>
       <div
-        class="h-32 bg-green-jdr border-2 border-olive-jdr shadow-md rounded-xl p-4 overflow-y-auto"
+        class="h-40 bg-green-jdr border-2 border-olive-jdr rounded-xl p-4 overflow-y-auto shadow-md"
       >
         <p class="text-[10px] font-bold text-creamy-jdr/60 uppercase mb-2 tracking-widest">
           Description
         </p>
         <p v-if="selectedSkill" class="text-sm text-creamy-jdr leading-relaxed italic">
-          {{ selectedSkill.description }}
+          "{{ selectedSkill.description }}"
         </p>
-        <p v-else class="text-xs text-olive-jdr italic">Sélectionnez une compétence...</p>
       </div>
     </div>
   </div>
@@ -304,10 +303,5 @@ onMounted(() => fetchData())
 }
 .box-grow {
   flex: 1;
-}
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
 }
 </style>

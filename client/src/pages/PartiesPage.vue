@@ -22,13 +22,14 @@ onMounted(() => {
 <template>
   <!-- main container -->
   <div class="flex flex-wrap p-4 gap-4 justify-center">
-    <pcard
+    <a
       v-for="party in parties"
       :key="party.id"
-      :partyId="party.id"
-      :partyMj="party.game_master"
-      :nbPlayers="party.nb_players"
-    />
+      :href="`/party/${party.id}`"
+      class="w-full max-w-xs h-58.75"
+    >
+      <pcard :partyId="party.id" :partyMj="party.game_master" :nbPlayers="party.nb_players" />
+    </a>
     <a
       v-if="hasRole('game_master')"
       href="/party/create"

@@ -22,7 +22,7 @@ onMounted(() => {
 <template>
   <!-- main container -->
   <div class="flex flex-wrap p-4 gap-4 justify-center" v-for="party in parties" :key="party.id">
-    <pcard :partyId="party.id" :partyMjId="party.mj_id" />
+    <pcard :partyId="party.id" :partyMj="party.game_master" :nbPlayers="party.nb_players" />
   </div>
 </template>
 

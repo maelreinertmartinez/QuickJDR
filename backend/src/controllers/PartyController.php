@@ -6,11 +6,15 @@ use QuickJDR\contexts\AuthContext;
 use QuickJDR\attributes\RequiresAuth;
 use QuickJDR\attributes\RequiresRole;
 use QuickJDR\gateways\PartyGateway;
+use QuickJDR\gateways\UserGateway;
 
 #[RequiresAuth]
 class PartyController implements Controller
 {
-    public function __construct(private PartyGateway $gateway) {}
+    public function __construct(
+        private PartyGateway $parties,
+        private UserGateway $users,
+    ) {}
 
     public function processRequest(
         string $method,
@@ -48,7 +52,7 @@ class PartyController implements Controller
     #[RequiresRole("game_master")]
     private function create(?AuthContext $auth): void
     {
-        $id = $this->gateway->create($auth->userId);
+        $id = $this->parties->create($auth->userId);
 
         http_response_code(201);
         echo json_encode([
@@ -59,7 +63,20 @@ class PartyController implements Controller
 
     private function list(): void
     {
-        echo json_encode($this->gateway->getAll());
+        $parties = $this->parties->getAll();
+
+        for ($i = 0; $i < count($parties); $i++) {
+            $parties[$i]["game_master"] = $this->users->getById(
+                $parties[$i]["mj_id"],
+            )["username"];
+            unset($parties[$i]["mj_id"]);
+
+            $parties[$i]["nb_players"] = $this->parties->countPlayers(
+                $parties[$i]["id"],
+            );
+        }
+
+        echo json_encode($parties);
     }
 
     private function players(?int $partyId): void
@@ -70,7 +87,7 @@ class PartyController implements Controller
             return;
         }
 
-        echo json_encode($this->gateway->getPlayers($partyId));
+        echo json_encode($this->parties->getPlayers($partyId));
     }
 
     public static function getBasePath(): string

@@ -28,6 +28,19 @@ class UserGateway extends Gateway
         $stmt->execute();
     }
 
+    public function getById(int $userId): array|false
+    {
+        $sql = "SELECT *
+                FROM users
+                WHERE id = :user_id";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(":user_id", $userId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function addRoleToUser(int $userId, int $roleId)
     {
         $sql = "INSERT INTO user_role (user_id, role_id)

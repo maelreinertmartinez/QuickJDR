@@ -14,7 +14,6 @@ use QuickJDR\controllers\UserController;
 use QuickJDR\controllers\SkillController;
 use QuickJDR\gateways\SkillGateway;
 
-
 return [
     AuthController::class => [
         UserGateway::class,
@@ -22,8 +21,8 @@ return [
         SessionGateway::class,
     ],
     DiceController::class => [DiceGateway::class],
-    PartyController::class => [PartyGateway::class],
+    PartyController::class => [PartyGateway::class, UserGateway::class],
     CharacterController::class => [CharacterGateway::class],
     UserController::class => [UserGateway::class],
-    SkillController::class=>[SkillGateway::class],
+    SkillController::class => [SkillGateway::class],
 ];

@@ -2,7 +2,8 @@
 <script setup>
 defineProps({
   partyId: { type: Number },
-  partyMjId: { type: Number },
+  partyMj: { type: String },
+  nbPlayers: { type: Number },
 })
 </script>
 
@@ -16,10 +17,13 @@ defineProps({
     <!-- party owner -->
     <h2 class="text-xl text-creamy-jdr font-semibold p-2">Hébergée par:</h2>
     <h2 class="text-xl text-creamy-jdr font-semibold p-2 text-center bg-orange-jdr rounded-lg">
-      {{ partyMjId }}
+      {{ partyMj }}
     </h2>
     <!-- party population -->
-    <p class="text-creamy-jdr p-2">Nombre de joueurs: 5<!-- {{ party.character_count }}--></p>
+    <p class="text-creamy-jdr p-2">
+      Nombre de joueurs: {{ nbPlayers
+      }}<!-- {{ party.character_count }}-->
+    </p>
   </div>
 </template>
 

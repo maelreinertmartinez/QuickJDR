@@ -31,7 +31,7 @@ class PartyController implements Controller
 
             case "list":
                 if ($method === "GET") {
-                    $this->list();
+                    $this->list($auth);
                 }
                 break;
 
@@ -61,9 +61,9 @@ class PartyController implements Controller
         ]);
     }
 
-    private function list(): void
+    private function list(?AuthContext $auth): void
     {
-        $parties = $this->parties->getAll();
+        $parties = $this->parties->getFromPlayer($auth->userId);
 
         for ($i = 0; $i < count($parties); $i++) {
             $parties[$i]["game_master"] = $this->users->getById(

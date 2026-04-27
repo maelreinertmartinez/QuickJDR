@@ -35,6 +35,18 @@ class PartyGateway extends Gateway
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getFromPlayer(int $playerId): ?array
+    {
+        $stmt = $this->conn->prepare(
+            "SELECT party.id, party.mj_id FROM party
+            LEFT JOIN characters ON party.id = characters.party_id
+            WHERE party.mj_id = :player_id OR characters.user_id = :player_id",
+        );
+
+        $stmt->execute([":player_id" => $playerId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getPlayers(int $partyId): array
     {
         $stmt = $this->conn->prepare(

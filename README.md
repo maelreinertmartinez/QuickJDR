@@ -42,3 +42,4 @@ Puis coller le contenu présent dans `backend/database.sql`.
 
 - http://localhost:5173/login
 - http://localhost:5173/register
+- http://localhost:5173/party/list (authentifié)

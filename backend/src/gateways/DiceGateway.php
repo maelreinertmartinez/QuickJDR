@@ -6,7 +6,7 @@ use PDO;
 
 class DiceGateway extends Gateway
 {
-    public function create(int $character_id, int $value, int $max_value)
+    public function create(?int $character_id, int $value, int $max_value)
     {
         $stmt = $this->conn->prepare(
             "INSERT INTO dice (character_id, value, max_value)

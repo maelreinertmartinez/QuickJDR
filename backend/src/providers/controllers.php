@@ -20,7 +20,11 @@ return [
         RoleGateway::class,
         SessionGateway::class,
     ],
-    DiceController::class => [DiceGateway::class],
+    DiceController::class => [
+        DiceGateway::class,
+        CharacterGateway::class,
+        SkillGateway::class,
+    ],
     PartyController::class => [PartyGateway::class, UserGateway::class],
     CharacterController::class => [CharacterGateway::class],
     UserController::class => [UserGateway::class],

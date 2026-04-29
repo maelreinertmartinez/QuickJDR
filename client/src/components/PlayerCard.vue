@@ -60,6 +60,7 @@
           <span class="pc-stat-val">{{ s.value }}</span>
         </div>
       </div>
+    </div>
 
       <hr class="pc-div" />
 

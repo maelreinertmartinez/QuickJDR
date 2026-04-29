@@ -2,6 +2,7 @@
   <div class="mj-page">
     <!-- Header -->
     <header class="mj-header">
+      <button class="mj-back-btn" @click="$router.back()">←</button>
       <div class="mj-crown">♛</div>
       <h1 class="mj-title">Table du maître</h1>
     </header>
@@ -55,6 +56,21 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.mj-back-btn {
+  background: none;
+  border: none;
+  color: #d4c5a9;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.mj-back-btn:hover {
+  background-color: #2e3a28;
+}
+
 .mj-page {
   min-height: 100vh;
   background: #1c2318;

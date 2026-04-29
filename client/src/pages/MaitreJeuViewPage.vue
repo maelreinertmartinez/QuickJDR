@@ -34,17 +34,24 @@ import PlayerCard from '@/components/PlayerCard.vue'
 import DiceRoller from '@/components/DiceRoller.vue'
 import DiceHistory from '@/components/DiceHistory.vue'
 import { usePlayers } from '@/composables/usePlayers'
+import { useRoute } from 'vue-router'
+
 import api, { setToken } from '@/utils/api'
 
 const { players, loading, error, fetchPlayers, applyUpdate } = usePlayers()
 const rollHistory = ref([])
+const route = useRoute()
 
 function onRoll(result) {
   rollHistory.value.unshift(result)
   if (rollHistory.value.length > 10) rollHistory.value.pop()
 }
 
-onMounted(() => fetchPlayers(1))
+onMounted(() => {
+  if (route.params.id) {
+    fetchPlayers(route.params.id)
+  }
+})
 </script>
 
 <style scoped>

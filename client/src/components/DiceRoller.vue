@@ -33,7 +33,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import axios from 'axios'
+import api from '@/utils/api'
 
 const emit = defineEmits(['rolled'])
 const diceOptions = [4, 6, 8, 10, 12, 20, 100]
@@ -52,7 +52,7 @@ async function roll() {
   try {
     const rolls = await Promise.all(
       Array.from({ length: n }, async () => {
-        const { data } = await axios.get('/api/dice/blank', { params: { max_value: sides.value } })
+        const { data } = await api.get('/dice', { params: { max_value: sides.value } })
         return data.value
       }),
     )

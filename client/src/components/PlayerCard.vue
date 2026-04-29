@@ -44,10 +44,10 @@
         @change="(v) => updateStat('armor', v)"
       />
 
-      <hr class="pc-div" />
+      <!-- <hr class="pc-div" /> -->
 
       <!-- Caractéristiques -->
-      <p class="pc-sk-title">Caractéristiques</p>
+      <!-- <p class="pc-sk-title">Caractéristiques</p>
       <div v-if="statsLoading" class="pc-sk-empty">Chargement…</div>
       <div v-else-if="statsError" class="pc-sk-error">⚠️ {{ statsError }}</div>
       <div v-else class="pc-stats-grid">
@@ -59,24 +59,23 @@
           <span class="pc-stat-mod">{{ modifier(s.value) }}</span>
           <span class="pc-stat-val">{{ s.value }}</span>
         </div>
-      </div>
+      </div> -->
     </div>
 
-      <hr class="pc-div" />
+    <hr class="pc-div" />
 
-      <!-- Compétences -->
-      <p class="pc-sk-title">Compétences</p>
-      <div v-if="skillsLoading" class="pc-sk-empty">Chargement…</div>
-      <div v-else-if="skillsError" class="pc-sk-error">⚠️ {{ skillsError }}</div>
-      <div v-else-if="!skills.length" class="pc-sk-empty">Aucune compétence</div>
-      <div v-else>
-        <div v-for="s in skills" :key="s.skill_id" class="pc-sk-row">
-          <span class="pc-sk-name">{{ s.label }}</span>
-          <span class="badge b-mp">MP{{ s.mana_cost }}</span>
-          <span v-if="s.damage != null" class="badge b-dmg">⚔{{ s.damage }}</span>
-          <span v-if="s.healing != null" class="badge b-heal">+{{ s.healing }}</span>
-          <span class="badge b-dice">D×{{ s.dice_cost }}</span>
-        </div>
+    <!-- Compétences -->
+    <p class="pc-sk-title">Compétences</p>
+    <div v-if="skillsLoading" class="pc-sk-empty">Chargement…</div>
+    <div v-else-if="skillsError" class="pc-sk-error">⚠️ {{ skillsError }}</div>
+    <div v-else-if="!skills.length" class="pc-sk-empty">Aucune compétence</div>
+    <div v-else>
+      <div v-for="s in skills" :key="s.skill_id" class="pc-sk-row">
+        <span class="pc-sk-name">{{ s.label }}</span>
+        <span class="badge b-mp">MP{{ s.mana_cost }}</span>
+        <span v-if="s.damage != null" class="badge b-dmg">⚔{{ s.damage }}</span>
+        <span v-if="s.healing != null" class="badge b-heal">+{{ s.healing }}</span>
+        <span class="badge b-dice">D×{{ s.dice_cost }}</span>
       </div>
     </div>
   </div>
@@ -84,7 +83,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import axios from 'axios'
+import api from '@/utils/api'
 import StatControl from '@/components/StatControl.vue'
 
 const props = defineProps({ player: { type: Object, required: true } })
@@ -133,7 +132,7 @@ async function fetchCharStats() {
   statsLoading.value = true
   statsError.value = null
   try {
-    const { data } = await axios.get(`/api/character/${props.player.character_id}/stats`)
+    const { data } = await api.get(`/api/character/${props.player.character_id}/stats`)
 
     // Vérifie que c'est bien un tableau d'objets avec {short, value}
     if (
@@ -159,7 +158,8 @@ async function fetchCharStats() {
     }
   } catch (e) {
     // Endpoint absent ou erreur → fallback silencieux
-    charStats.value = fallbackStats
+    // charStats.value = fallbackStats
+    console.error(e.response?.data)
   } finally {
     statsLoading.value = false
   }
@@ -174,7 +174,7 @@ async function fetchSkills() {
   skillsLoading.value = true
   skillsError.value = null
   try {
-    const { data } = await axios.get('/api/skill/list')
+    const { data } = await api.get('/api/skill/list')
     skills.value = Array.isArray(data) ? data : []
   } catch (e) {
     skillsError.value = e.response?.data?.message ?? 'Erreur de chargement'
@@ -217,7 +217,7 @@ async function updateStat(stat, delta) {
   loadingMap[stat] = true
   errorMap[stat] = null
   try {
-    const { data } = await axios.patch(endpointMap[stat], {
+    const { data } = await api.patch(endpointMap[stat], {
       character_id: props.player.character_id,
       value: delta,
     })
@@ -243,13 +243,13 @@ async function restore() {
     const missingMana = props.player.max_mana - props.player.mana
     await Promise.all([
       missingHp > 0
-        ? axios.patch('/character/health/increase', {
+        ? api.patch('/character/health/increase', {
             character_id: props.player.character_id,
             value: missingHp,
           })
         : Promise.resolve(),
       missingMana > 0
-        ? axios.patch('/character/mana/increase', {
+        ? api.patch('/character/mana/increase', {
             character_id: props.player.character_id,
             value: missingMana,
           })
@@ -273,7 +273,7 @@ async function restore() {
 }
 
 onMounted(() => {
-  fetchCharStats()
+  // fetchCharStats()
   fetchSkills()
 })
 </script>

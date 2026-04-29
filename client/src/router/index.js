@@ -4,7 +4,7 @@ import PartiesPage from '@/pages/PartiesPage.vue'
 import RegisterPage from '@/pages/RegisterPage.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import { hasToken, hasRole } from '@/utils/api'
-import JoueurPage from '@/pages/JoueurPage.vue'
+// import JoueurPage from '@/pages/JoueurPage.vue'
 
 const routes = [
   {
@@ -13,13 +13,9 @@ const routes = [
   },
   { path: '/login', name: 'Login', component: LoginPage },
   { path: '/register', name: 'Register', component: RegisterPage },
-  { path: '/gamemaster/dashboard', name: 'MaitreJeuView', component: MaitreJeuViewPage },
+  { path: '/party/:id', name: 'MaitreJeuView', component: MaitreJeuViewPage },
   { path: '/party/list', name: 'PartiesPage', component: PartiesPage },
-  { path: '/MaitreJeuView', name: 'MaitreJeuView', component: MaitreJeuViewPage },
-  { path: '/joueur', name: 'Joueur', component: JoueurPage },
-  { path: '/joueur', name: 'Joueur', component: JoueurPage },
-  { path: '/MaitreJeuView', name: 'MaitreJeuView', component: MaitreJeuViewPage },
-  { path: '/joueur', name: 'Joueur', component: JoueurPage },
+  // { path: '/joueur', name: 'Joueur', component: JoueurPage },
 ]
 
 export default createRouter({

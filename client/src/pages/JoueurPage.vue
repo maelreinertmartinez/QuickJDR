@@ -3,15 +3,6 @@ import { ref, onMounted } from 'vue'
 import api from '@/utils/api'
 import StatBar from '@/components/StarBar.vue'
 
-const apiUrl = 'http://localhost:8000'
-const api = axios.create({
-  baseURL: apiUrl,
-  baseURL: 'http://localhost:8000',
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem('token')}`,
-  },
-})
-
 const currentPlayer = ref(null)
 const skills = ref([])
 const selectedSkill = ref(null)
@@ -19,6 +10,7 @@ const diceResult = ref(null)
 const diceType = ref(20)
 const isRolling = ref(false)
 const healthModifier = ref(0)
+const errorMessage = ref(null)
 
 // Gestion des erreurs
 const errorMessage = ref(null)
@@ -27,22 +19,17 @@ const showError = (msg) => {
   setTimeout(() => (errorMessage.value = null), 5000)
 }
 
-const handleApiError = (error) => {
-  const msg = error.response?.data?.error || 'Une erreur inattendue est survenue.'
-  showError(msg)
-}
-
-const calculateModifier = (val) => {
-  const mod = Math.floor((val - 10) / 2)
-  return mod >= 0 ? `+${mod}` : mod
-}
-
 const fetchData = async () => {
   try {
-    const charRes = await api.get('/character')
-    currentPlayer.value = { ...charRes.data, stats: mockStats, max_armor: 20 }
+    // Utilisation de character/1 pour ton test direct
+    const charRes = await api.get('/character/1')
+    currentPlayer.value = {
+      ...charRes.data,
+      stats: mockStats,
+      max_armor: 20,
+    }
     const skillsRes = await api.get('/skill/list')
-    skills.value = skillsRes.data
+    skills.value = Array.isArray(skillsRes.data) ? skillsRes.data : []
   } catch (e) {
     handleApiError(e)
   }
@@ -59,11 +46,10 @@ const sleep = async () => {
 }
 
 const modifyHealth = async (isDamage) => {
-  if (healthModifier.value <= 0) return
+  if (!currentPlayer.value || healthModifier.value <= 0) return
   try {
-    const res = await api.post('/character/take-damage', {
-      damage: isDamage ? healthModifier.value : -healthModifier.value,
-    })
+    const damageValue = isDamage ? healthModifier.value : -healthModifier.value
+    const res = await api.post('/character/take-damage', { damage: damageValue })
     currentPlayer.value.health = res.data.new_health
     healthModifier.value = 0
   } catch (e) {
@@ -73,6 +59,7 @@ const modifyHealth = async (isDamage) => {
 
 // Lancement de dé utilisant l'URL concaténée
 const rollDice = async () => {
+  if (!currentPlayer.value) return
   isRolling.value = true
   diceResult.value = null
   try {
@@ -88,15 +75,6 @@ const rollDice = async () => {
   }
 }
 
-const mockStats = [
-  { short: 'FOR', name: 'Force', value: 10 },
-  { short: 'DEX', name: 'Dextérité', value: 18 },
-  { short: 'CON', name: 'Constitution', value: 14 },
-  { short: 'INT', name: 'Intelligence', value: 12 },
-  { short: 'SAG', name: 'Sagesse', value: 16 },
-  { short: 'CHA', name: 'Charisme', value: 11 },
-]
-
 onMounted(fetchData)
 </script>
 
@@ -105,18 +83,15 @@ onMounted(fetchData)
     <Transition name="fade">
       <div
         v-if="errorMessage"
-        class="absolute top-5 right-5 z-50 bg-red-600 border-2 border-white text-white px-6 py-3 rounded-lg shadow-2xl font-bold flex items-center gap-3"
+        class="absolute top-5 right-5 z-50 bg-red-600 border-2 border-white text-white px-6 py-3 rounded-lg shadow-2xl font-bold"
       >
-        <span>⚠️</span> {{ errorMessage }}
-        <button @click="errorMessage = null" class="ml-4 hover:opacity-70">✕</button>
+        ⚠️ {{ errorMessage }}
       </div>
     </Transition>
 
     <div class="column">
-      <div
-        class="bg-green-jdr border-2 border-olive-jdr rounded-xl p-4 flex-1 overflow-y-auto shadow-md"
-      >
-        <p class="text-xs font-medium text-creamy-jdr uppercase tracking-widest mb-4 font-black">
+      <div class="bg-green-jdr border-2 border-olive-jdr rounded-xl p-4 flex-1 overflow-y-auto">
+        <p class="text-xs font-black text-creamy-jdr uppercase tracking-widest mb-4">
           Caractéristiques
         </p>
         <div class="space-y-2">
@@ -140,7 +115,6 @@ onMounted(fetchData)
           </div>
         </div>
       </div>
-
       <div
         class="bg-green-jdr border-2 border-olive-jdr rounded-xl p-4 shadow-md flex flex-col gap-3"
       >
@@ -148,7 +122,7 @@ onMounted(fetchData)
           <span class="text-lg font-black text-creamy-jdr uppercase">{{ currentPlayer.name }}</span>
           <button
             @click="sleep"
-            class="bg-orange-jdr hover:bg-brown-jdr text-creamy-jdr p-2 rounded-lg transition-all active:scale-90 shadow-lg"
+            class="bg-orange-jdr hover:bg-brown-jdr text-creamy-jdr p-2 rounded-lg transition-all active:scale-90"
           >
             🛏️
           </button>
@@ -190,13 +164,13 @@ onMounted(fetchData)
             />
             <button
               @click="modifyHealth(false)"
-              class="bg-orange-jdr hover:bg-brown-jdr text-creamy-jdr w-8 h-8 rounded-lg font-bold shadow-md"
+              class="bg-orange-jdr text-creamy-jdr w-8 h-8 rounded-lg font-bold shadow-md"
             >
               +
             </button>
             <button
               @click="modifyHealth(true)"
-              class="bg-orange-jdr hover:bg-brown-jdr text-creamy-jdr w-8 h-8 rounded-lg font-bold shadow-md"
+              class="bg-orange-jdr text-creamy-jdr w-8 h-8 rounded-lg font-bold shadow-md"
             >
               -
             </button>
@@ -209,22 +183,20 @@ onMounted(fetchData)
       >
         <div v-if="isRolling" class="text-6xl animate-bounce">🎲</div>
         <div v-else-if="diceResult !== null" class="flex flex-col items-center animate-in zoom-in">
-          <span class="text-creamy-jdr/60 text-[10px] uppercase font-bold"
-            >Résultat D{{ diceType }}</span
-          >
-          <span class="text-8xl font-black text-creamy-jdr tracking-tighter">{{ diceResult }}</span>
+          <span class="text-creamy-jdr/60 text-[10px] uppercase font-bold">D{{ diceType }}</span>
+          <span class="text-8xl font-black text-creamy-jdr">{{ diceResult }}</span>
         </div>
         <span
           v-else
           class="text-olive-jdr font-bold uppercase text-xs tracking-widest animate-pulse"
-          >Prêt à lancer</span
+          >Prêt</span
         >
       </div>
 
       <button
         @click="rollDice"
         :disabled="isRolling"
-        class="h-16 bg-orange-jdr hover:bg-brown-jdr text-creamy-jdr font-black text-xl uppercase rounded-xl shadow-xl border-b-4 border-brown-jdr active:border-b-0 transition-all"
+        class="h-16 bg-orange-jdr hover:bg-brown-jdr text-creamy-jdr font-black text-xl uppercase rounded-xl shadow-xl border-b-4 border-brown-jdr active:border-b-0"
       >
         {{ isRolling ? 'Lancement...' : 'LANCER LE DÉ' }}
       </button>
@@ -260,37 +232,35 @@ onMounted(fetchData)
               'bg-dark-green-jdr border-creamy-jdr/50 scale-[1.02]':
                 selectedSkill?.skill_id === skill.skill_id,
             }"
-            class="flex items-center gap-3 py-3 px-3 hover:bg-dark-green-jdr/40 rounded-lg cursor-pointer border border-transparent transition-all shadow-sm"
+            class="flex flex-col gap-1 py-3 px-3 hover:bg-dark-green-jdr/40 rounded-lg cursor-pointer border border-transparent transition-all"
           >
-            <span class="text-sm font-bold text-creamy-jdr flex-1 truncate">{{ skill.label }}</span>
-            <span class="text-blue-400 text-xs font-black">{{ skill.mana_cost }} MP</span>
-            <span class="text-red-400 text-xs font-black">{{ skill.dice_cost }} Cout</span>
-            <span class="text-yellow-400 text-xs font-black">{{ skill.healing }} Soin</span>
-            <span class="text-red-400 text-xs font-black">{{ skill.damage }} Dégat</span>
+            <span class="text-sm font-bold text-creamy-jdr truncate">{{ skill.label }}</span>
+            <div class="flex flex-wrap gap-2">
+              <span class="text-blue-400 text-[10px] font-black uppercase"
+                >{{ skill.mana_cost }} MP</span
+              >
+              <span v-if="skill.healing" class="text-green-400 text-[10px] font-black uppercase"
+                >{{ skill.healing }} Soin</span
+              >
+              <span v-if="skill.damage" class="text-red-400 text-[10px] font-black uppercase"
+                >{{ skill.damage }} Dgt</span
+              >
+              <span class="text-creamy-jdr/40 text-[10px] font-black uppercase"
+                >Coût D{{ skill.dice_cost }}</span
+              >
+            </div>
           </div>
         </div>
-
-        <div v-else class="flex flex-col items-center justify-center h-full opacity-40">
-
-          <p class="text-xs text-creamy-jdr font-bold uppercase tracking-widest text-center">
-
-          </p>
-        </div>
+        <p v-else class="text-xs text-olive-jdr italic text-center mt-10">Grimoire vide...</p>
       </div>
       <div
-        class="h-40 bg-green-jdr border-2 border-olive-jdr shadow-md rounded-xl p-4 overflow-y-auto"
+        class="h-40 bg-green-jdr border-2 border-olive-jdr rounded-xl p-4 overflow-y-auto shadow-md"
       >
         <p class="text-[10px] font-black text-creamy-jdr/60 uppercase mb-2 tracking-widest">
           Description
         </p>
-        <p
-          v-if="selectedSkill"
-          class="text-sm text-creamy-jdr leading-relaxed italic animate-in slide-in-from-bottom-2"
-        >
+        <p v-if="selectedSkill" class="text-sm text-creamy-jdr leading-relaxed italic">
           "{{ selectedSkill.description }}"
-        </p>
-        <p v-else class="text-xs text-olive-jdr italic">
-          Sélectionnez une compétence dans le grimoire...
         </p>
       </div>
     </div>

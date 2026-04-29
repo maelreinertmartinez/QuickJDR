@@ -64,6 +64,8 @@ $action = $parts[2] ?? "";
 
 $authMiddleware = new AuthMiddleware();
 if (!$authMiddleware->check($controller, $action, $authContext)) {
+    http_response_code(403);
+    echo json_encode(["error" => "Forbidden"]);
     exit();
 }
 

@@ -1,6 +1,5 @@
 <template>
   <div class="pc-card">
-    <!-- Header -->
     <div class="pc-header">
       <div class="pc-av" :style="{ background: avBg, color: avText }">
         {{ initials(player.name) }}
@@ -14,7 +13,6 @@
       </button>
     </div>
 
-    <!-- Stats PV / Mana / Armure -->
     <div class="pc-body">
       <StatControl
         label="❤️ PV"

@@ -9,7 +9,9 @@ defineProps({
 
 <template>
   <!-- card -->
-  <div class="bg-green-jdr rounded-lg shadow-md p-8 w-full max-w-xs border-olive-jdr/40 border-2">
+  <div
+    class="bg-green-jdr rounded-lg shadow-md p-8 w-full max-w-xs border-olive-jdr/40 border-2 hover:border-orange-jdr"
+  >
     <!-- party id -->
     <h1 class="text-2xl text-creamy-jdr mb-2 font-bold bg-orange-jdr rounded-lg px-2">
       Partie #{{ partyId }}

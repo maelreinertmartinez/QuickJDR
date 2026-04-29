@@ -50,8 +50,8 @@ onMounted(() => fetchPlayers(1))
 <style scoped>
 .mj-page {
   min-height: 100vh;
-  background: #1c2318;
-  color: #d4c5a9;
+  background: var(--color-dark-green-jdr);
+  color: var(--color-creamy-jdr);
   padding: 12px;
   font-size: 12px;
   font-family: 'Segoe UI', sans-serif;
@@ -63,18 +63,18 @@ onMounted(() => fetchPlayers(1))
   gap: 10px;
   margin-bottom: 10px;
   padding-bottom: 8px;
-  border-bottom: 1px solid #2e3a28;
+  border-bottom: 1px solid var(--color-olive-jdr);
 }
 
 .mj-crown {
   width: 28px;
   height: 28px;
-  background: #9a6422;
+  background: var(--color-orange-jdr);
   border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #f5e0a0;
+  color: var(--color-creamy-jdr);
   font-size: 14px;
   flex-shrink: 0;
 }
@@ -82,7 +82,7 @@ onMounted(() => fetchPlayers(1))
 .mj-title {
   font-size: 11px;
   font-weight: 500;
-  color: #d4a855;
+  color: var(--color-creamy-jdr);
   text-transform: uppercase;
   letter-spacing: 0.14em;
 }
@@ -91,14 +91,14 @@ onMounted(() => fetchPlayers(1))
   margin-bottom: 8px;
   padding: 8px 12px;
   border-radius: 6px;
-  background: #2e1010;
-  border: 1px solid #6a2018;
-  color: #e05848;
+  background: var(--color-brown-jdr);
+  border: 1px solid var(--color-olive-jdr);
+  color: var(--color-creamy-jdr);
   font-size: 12px;
 }
 
 .mj-loading {
-  color: #7a8a6a;
+  color: var(--color-olive-jdr);
   font-size: 12px;
   padding: 20px 0;
 }

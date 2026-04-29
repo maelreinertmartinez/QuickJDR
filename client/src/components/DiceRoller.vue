@@ -74,14 +74,14 @@ async function roll() {
 
 <style scoped>
 .dr-panel {
-  background: #232c1e;
-  border: 1px solid #2e3a28;
+  background: var(--color-green-jdr);
+  border: 1px solid var(--color-olive-jdr);
   border-radius: 8px;
   padding: 8px 10px;
 }
 .dr-title {
   font-size: 9px;
-  color: #9a7840;
+  color: var(--color-creamy-jdr);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: 6px;
@@ -101,32 +101,32 @@ async function roll() {
 }
 .dr-group label {
   font-size: 9px;
-  color: #8a9a72;
+  color: var(--color-olive-jdr);
 }
 .dr-input {
   width: 46px;
-  background: #171e13;
-  border: 1px solid #3a4a2e;
+  background: var(--color-brown-jdr);
+  border: 1px solid var(--color-olive-jdr);
   border-radius: 4px;
   padding: 3px 6px;
-  color: #e8c870;
+  color: var(--color-creamy-jdr);
   font-size: 12px;
   text-align: center;
 }
 .dr-select {
-  background: #171e13;
-  border: 1px solid #3a4a2e;
+  background: var(--color-brown-jdr);
+  border: 1px solid var(--color-olive-jdr);
   border-radius: 4px;
   padding: 3px 8px;
-  color: #e8c870;
+  color: var(--color-creamy-jdr);
   font-size: 12px;
 }
 .dr-btn {
-  background: #9a6422;
+  background: var(--color-orange-jdr);
   border: none;
   border-radius: 5px;
   padding: 5px 14px;
-  color: #f5e0a0;
+  color: var(--color-creamy-jdr);
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
@@ -134,7 +134,7 @@ async function roll() {
   letter-spacing: 0.06em;
 }
 .dr-btn:hover:not(:disabled) {
-  background: #b07830;
+  background: var(--color-brown-jdr);
 }
 .dr-btn:disabled {
   opacity: 0.5;
@@ -142,7 +142,7 @@ async function roll() {
 }
 .dr-error {
   font-size: 10px;
-  color: #e05848;
+  color: var(--color-orange-jdr);
   margin-bottom: 6px;
 }
 .dr-results {
@@ -156,9 +156,9 @@ async function roll() {
   width: 30px;
   height: 30px;
   border-radius: 5px;
-  background: #171e13;
-  border: 1px solid #3a4a2e;
-  color: #e8c870;
+  background: var(--color-brown-jdr);
+  border: 1px solid var(--color-olive-jdr);
+  color: var(--color-creamy-jdr);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -166,27 +166,27 @@ async function roll() {
   font-weight: 500;
 }
 .dr-die.crit {
-  background: #1c3010;
-  border-color: #4a7828;
-  color: #90d850;
+  background: var(--color-dark-green-jdr);
+  border-color: var(--color-orange-jdr);
+  color: var(--color-orange-jdr);
 }
 .dr-die.fail {
-  background: #301210;
-  border-color: #6a2018;
-  color: #e05848;
+  background: var(--color-brown-jdr);
+  border-color: var(--color-orange-jdr);
+  color: var(--color-orange-jdr);
 }
 .dr-total {
-  background: #2e2208;
-  border: 1px solid #7a5818;
+  background: var(--color-brown-jdr);
+  border: 1px solid var(--color-olive-jdr);
   border-radius: 4px;
   padding: 3px 8px;
-  color: #e8c870;
+  color: var(--color-creamy-jdr);
   font-size: 12px;
   font-weight: 600;
 }
 .dr-empty {
   font-size: 10px;
-  color: #4a5a42;
+  color: var(--color-olive-jdr);
   font-style: italic;
 }
 </style>

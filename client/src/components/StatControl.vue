@@ -60,14 +60,14 @@ function applyInput() {
 }
 .sc-label {
   font-size: 11px;
-  color: #7a8a6a;
+  color: var(--color-creamy-jdr);
   width: 58px;
   flex-shrink: 0;
 }
 .sc-bar-bg {
   flex: 1;
   height: 5px;
-  background: #171e13;
+  background: var(--color-brown-jdr);
   border-radius: 3px;
   overflow: hidden;
 }
@@ -78,7 +78,7 @@ function applyInput() {
 }
 .sc-val {
   font-size: 12px;
-  color: #e8c870;
+  color: var(--color-creamy-jdr);
   min-width: 40px;
   text-align: right;
   font-weight: 500;
@@ -92,9 +92,9 @@ function applyInput() {
   width: 20px;
   height: 20px;
   border-radius: 4px;
-  border: 1px solid #3a4a2e;
-  background: #171e13;
-  color: #c8a860;
+  border: 1px solid var(--color-olive-jdr);
+  background: var(--color-brown-jdr);
+  color: var(--color-creamy-jdr);
   font-size: 13px;
   display: flex;
   align-items: center;
@@ -104,7 +104,7 @@ function applyInput() {
   line-height: 1;
 }
 .sc-btn:hover:not(:disabled) {
-  background: #2e3a28;
+  background: var(--color-orange-jdr);
 }
 .sc-btn:disabled {
   opacity: 0.4;
@@ -113,17 +113,17 @@ function applyInput() {
 .sc-input {
   width: 36px;
   height: 20px;
-  background: #171e13;
-  border: 1px solid #3a4a2e;
+  background: var(--color-brown-jdr);
+  border: 1px solid var(--color-olive-jdr);
   border-radius: 3px;
-  color: #e8c870;
+  color: var(--color-creamy-jdr);
   font-size: 10px;
   text-align: center;
   padding: 0 2px;
 }
 .sc-error {
   font-size: 10px;
-  color: #e05848;
+  color: var(--color-orange-jdr);
   margin-top: 3px;
   margin-left: 66px;
 }

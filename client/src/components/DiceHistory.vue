@@ -32,14 +32,14 @@ function formatTime(date) {
 
 <style scoped>
 .dh-panel {
-  background: #232c1e;
-  border: 1px solid #2e3a28;
+  background: var(--color-green-jdr);
+  border: 1px solid var(--color-olive-jdr);
   border-radius: 8px;
   padding: 8px 10px;
 }
 .dh-title {
   font-size: 9px;
-  color: #9a7840;
+  color: var(--color-creamy-jdr);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: 6px;
@@ -47,7 +47,7 @@ function formatTime(date) {
 }
 .dh-empty {
   font-size: 10px;
-  color: #4a5a42;
+  color: var(--color-olive-jdr);
   font-style: italic;
 }
 .dh-item {
@@ -55,24 +55,24 @@ function formatTime(date) {
   justify-content: space-between;
   align-items: center;
   padding: 3px 0;
-  border-bottom: 1px solid #1e2818;
+  border-bottom: 1px solid var(--color-olive-jdr);
 }
 .dh-item:last-child {
   border-bottom: none;
 }
 .dh-label {
   font-size: 10px;
-  color: #8a9a72;
+  color: var(--color-creamy-jdr);
   display: flex;
   align-items: center;
   gap: 5px;
 }
 .dh-label strong {
-  color: #c8a860;
+  color: var(--color-creamy-jdr);
 }
 .dh-time {
   font-size: 9px;
-  color: #4a5a42;
+  color: var(--color-olive-jdr);
 }
 .dh-right {
   display: flex;
@@ -87,9 +87,9 @@ function formatTime(date) {
   width: 18px;
   height: 18px;
   border-radius: 3px;
-  background: #171e13;
-  border: 1px solid #3a4a2e;
-  color: #c8a860;
+  background: var(--color-brown-jdr);
+  border: 1px solid var(--color-olive-jdr);
+  color: var(--color-creamy-jdr);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -97,17 +97,17 @@ function formatTime(date) {
   font-weight: 500;
 }
 .dh-die.crit {
-  background: #1c3010;
-  color: #90d850;
+  background: var(--color-dark-green-jdr);
+  color: var(--color-creamy-jdr);
 }
 .dh-die.fail {
-  background: #301210;
-  color: #e05848;
+  background: var(--color-brown-jdr);
+  color: var(--color-orange-jdr);
 }
 .dh-total {
   font-size: 10px;
   font-weight: 600;
-  color: #e8c870;
+  color: var(--color-creamy-jdr);
   margin-left: 2px;
 }
 </style>

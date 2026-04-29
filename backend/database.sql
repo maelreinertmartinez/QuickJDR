@@ -16,7 +16,7 @@ CREATE TABLE characters (
     user_id bigint NOT NULL,
     party_id bigint NOT NULL,
     name VARCHAR(50) NOT NULL,
-    health integer NOT NULL,
+    health integer DEFAULT 100,
     max_health integer NOT NULL,
     armor integer DEFAULT 0,
     max_armor integer NOT NULL,

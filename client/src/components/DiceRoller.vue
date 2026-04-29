@@ -52,8 +52,10 @@ async function roll() {
   try {
     const rolls = await Promise.all(
       Array.from({ length: n }, async () => {
-        const { data } = await api.get('/dice', { params: { max_value: sides.value } })
-        return data.value
+        return api.post('/dice/blank', { max_value: sides.value }).then((res) => {
+          console.log(res)
+          return res.data.value
+        })
       }),
     )
     results.value = rolls

@@ -1,4 +1,5 @@
 <script setup>
+import pscroll from '@/components/PlayerListScrollable.vue'
 import api, { hasRole } from '@/utils/api'
 import { onMounted, ref } from 'vue'
 
@@ -18,6 +19,7 @@ onMounted(() => {
 </script>
 
 <template>
+  <pscroll />
   <div class="min-h-screen flex items-center justify-center flex-col">
     <div
       v-if="hasRole('game_master')"

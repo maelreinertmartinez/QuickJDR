@@ -1,6 +1,5 @@
 <template>
   <div class="pc-card">
-    <!-- Header -->
     <div class="pc-header">
       <div class="pc-av" :style="{ background: avBg, color: avText }">
         {{ initials(player.name) }}
@@ -14,7 +13,6 @@
       </button>
     </div>
 
-    <!-- Stats PV / Mana / Armure -->
     <div class="pc-body">
       <StatControl
         label="❤️ PV"
@@ -46,7 +44,6 @@
 
       <hr class="pc-div" />
 
-      <!-- Caractéristiques -->
       <p class="pc-sk-title">Caractéristiques</p>
       <div v-if="statsLoading" class="pc-sk-empty">Chargement…</div>
       <div v-else-if="statsError" class="pc-sk-error">⚠️ {{ statsError }}</div>
@@ -60,11 +57,9 @@
           <span class="pc-stat-val">{{ s.value }}</span>
         </div>
       </div>
-    </div>
 
       <hr class="pc-div" />
 
-      <!-- Compétences -->
       <p class="pc-sk-title">Compétences</p>
       <div v-if="skillsLoading" class="pc-sk-empty">Chargement…</div>
       <div v-else-if="skillsError" class="pc-sk-error">⚠️ {{ skillsError }}</div>

@@ -9,8 +9,8 @@ class CharacterGateway extends Gateway
     public function create(array $data): int
     {
         $sql = "INSERT INTO characters
-            (user_id, party_id, name, health, max_health, max_mana)
-            VALUES (:user_id, :party_id, :name, :health, :max_health, :max_mana)
+            (user_id, party_id, name, max_health, max_mana, max_armor)
+            VALUES (:user_id, :party_id, :name, :max_health, :max_mana, :max_armor)
             RETURNING id";
 
         $stmt = $this->conn->prepare($sql);
@@ -18,7 +18,7 @@ class CharacterGateway extends Gateway
             "user_id" => $data["user_id"],
             "party_id" => $data["party_id"],
             "name" => $data["name"],
-            "health" => $data["health"],
+            "max_armor" => $data["max_armor"],
             "max_health" => $data["max_health"],
             "max_mana" => $data["max_mana"],
         ]);

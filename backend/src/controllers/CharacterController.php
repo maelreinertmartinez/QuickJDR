@@ -19,7 +19,7 @@ class CharacterController implements Controller
     ): void {
         switch ($method) {
             case "POST":
-                $this->create($data, $auth->userId);
+                $this->create($data);
                 break;
 
             case "GET":
@@ -53,10 +53,14 @@ class CharacterController implements Controller
         }
     }
 
-    private function create(array $data, int $userId): void
+    private function create(array $data): void
     {
-        $data["user_id"] = $userId;
         $id = $this->gateway->create($data);
+        if ($id == null) {
+            http_response_code(500);
+            echo json_encode(["error" => "Error while inserting."]);
+            return;
+        }
         http_response_code(201);
         echo json_encode(["id" => $id]);
     }
@@ -83,11 +87,16 @@ class CharacterController implements Controller
     {
         if (empty($data["character_id"]) || !isset($data["value"])) {
             http_response_code(400);
-            echo json_encode(["error" => "character_id and value are required"]);
+            echo json_encode([
+                "error" => "character_id and value are required",
+            ]);
             return;
         }
 
-        $result = $this->gateway->updateHealth((int)$data["character_id"], (int)$data["value"]);
+        $result = $this->gateway->updateHealth(
+            (int) $data["character_id"],
+            (int) $data["value"],
+        );
         echo json_encode($result);
     }
 
@@ -95,11 +104,16 @@ class CharacterController implements Controller
     {
         if (empty($data["character_id"]) || !isset($data["value"])) {
             http_response_code(400);
-            echo json_encode(["error" => "character_id and value are required"]);
+            echo json_encode([
+                "error" => "character_id and value are required",
+            ]);
             return;
         }
 
-        $result = $this->gateway->updateMana((int)$data["character_id"], (int)$data["value"]);
+        $result = $this->gateway->updateMana(
+            (int) $data["character_id"],
+            (int) $data["value"],
+        );
         echo json_encode($result);
     }
 
@@ -107,11 +121,16 @@ class CharacterController implements Controller
     {
         if (empty($data["character_id"]) || !isset($data["value"])) {
             http_response_code(400);
-            echo json_encode(["error" => "character_id and value are required"]);
+            echo json_encode([
+                "error" => "character_id and value are required",
+            ]);
             return;
         }
 
-        $result = $this->gateway->updateArmor((int)$data["character_id"], (int)$data["value"]);
+        $result = $this->gateway->updateArmor(
+            (int) $data["character_id"],
+            (int) $data["value"],
+        );
         echo json_encode($result);
     }
 

@@ -36,7 +36,8 @@ function addPlayer() {
       max_armor: playerArmor.value,
       max_mana: playerMana.value,
     })
-    .then(() => {
+    .then((res) => {
+      console.log(res)
       fermerFormulaire()
       playerName.value = ''
       playerHealth.value = 100

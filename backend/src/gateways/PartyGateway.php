@@ -40,7 +40,8 @@ class PartyGateway extends Gateway
         $stmt = $this->conn->prepare(
             "SELECT party.id, party.mj_id FROM party
             LEFT JOIN characters ON party.id = characters.party_id
-            WHERE party.mj_id = :player_id OR characters.user_id = :player_id",
+            WHERE party.mj_id = :player_id OR characters.user_id = :player_id
+            GROUP BY party.id",
         );
 
         $stmt->execute([":player_id" => $playerId]);

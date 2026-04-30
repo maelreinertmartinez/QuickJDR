@@ -2,16 +2,6 @@
 import { ref, onMounted } from 'vue'
 import api from '@/utils/api'
 import StatBar from '@/components/StarBar.vue'
-
-const currentPlayer = ref(null)
-const skills = ref([])
-const selectedSkill = ref(null)
-const diceResult = ref(null)
-const diceType = ref(20)
-const isRolling = ref(false)
-const healthModifier = ref(0)
-const errorMessage = ref(null)
-
 const mockStats = [
   { short: 'FOR', name: 'Force', value: 10 },
   { short: 'DEX', name: 'Dextérité', value: 18 },
@@ -20,6 +10,34 @@ const mockStats = [
   { short: 'SAG', name: 'Sagesse', value: 16 },
   { short: 'CHA', name: 'Charisme', value: 11 },
 ]
+
+const mockSkill = {
+  skill_id: 999,
+  label: 'Boule de Feu',
+  description: 'Une explosion de flammes dévastatrice qui brûle tout sur son passage.',
+  mana_cost: 5,
+  dice_cost: 10,
+  damage: '2d6',
+  healing: null,
+}
+
+const currentPlayer = ref({
+  name: 'Chargement...',
+  health: 74,
+  max_health: 100,
+  mana: 20,
+  max_mana: 1000,
+  armor: 2,
+  max_armor: 10,
+  stats: mockStats,
+})
+const skills = ref([mockSkill])
+const selectedSkill = ref(mockSkill)
+const diceResult = ref(null)
+const diceType = ref(20)
+const isRolling = ref(false)
+const healthModifier = ref(0)
+const errorMessage = ref(null)
 
 const calculateModifier = (val) => {
   const mod = Math.floor((val - 10) / 2)
@@ -35,39 +53,50 @@ const fetchData = async () => {
   try {
     const charRes = await api.get('/characters')
 
-
+    // 1. Extraction des données
     const characterData = Array.isArray(charRes.data) ? charRes.data[0] : charRes.data
     console.log('Données reçues du serveur :', charRes.data)
+
     // 2. Vérification de l'existence du personnage
-    // Si characterData est null, undefined ou n'a pas d'ID, on redirige vers la création.
     if (!characterData || !characterData.id) {
-      console.warn('Aucun personnage trouvé, redirection vers la création...')
-      //window.location.href = '/characters/create'
+      console.warn('Aucun personnage trouvé.')
+      // window.location.href = '/characters/create'
       return
     }
 
- 
+    // 3. Mise à jour de currentPlayer avec les données SQL
     currentPlayer.value = {
       ...characterData,
-      // On utilise les noms de colonnes exacts de ta table SQL
       health: characterData.health,
       max_health: characterData.max_health,
       mana: characterData.mana ?? 0,
       max_mana: characterData.max_mana,
       armor: characterData.armor ?? 0,
       max_armor: characterData.max_armor,
-      // On conserve tes stats de test pour l'affichage des caractéristiques (FOR, DEX, etc.)
-      stats: mockStats,
+      stats: mockStats, // Vos stats par défaut
     }
 
-    // 4. On récupère la liste des compétences
+    // 4. Récupération des compétences
     const skillsRes = await api.get('/skills/list')
     skills.value = Array.isArray(skillsRes.data) ? skillsRes.data : []
+    if (skills.value == null) {
+      skills.value = [mockSkill]
+    }
+    /*skills.value = [
+      {
+        skill_id: 999,
+        label: 'Boule de Feu',
+        description: 'Une explosion de flammes dévastatrice qui brûle tout sur son passage.',
+        mana_cost: 5,
+        dice_cost: 10,
+        damage: '2d6',
+        healing: null,
+      },
+    ]*/
   } catch (e) {
     console.error('Erreur lors de la récupération des données :', e)
-    // Si l'API renvoie 404, on redirige aussi vers la création
     if (e.response?.status === 404) {
-      window.location.href = '/characters/create'
+      // window.location.href = '/characters/create'
     } else {
       handleApiError(e)
     }
@@ -77,8 +106,8 @@ const fetchData = async () => {
 const sleep = async () => {
   try {
     const res = await api.post('/characters/sleep')
-    currentPlayer.value.health = res.data.new_health
-    currentPlayer.value.mana = res.data.new_mana
+    currentPlayer.value.health = res.data.max_health
+    currentPlayer.value.mana = res.data.max_mana
   } catch (e) {
     handleApiError(e)
   }
@@ -98,16 +127,29 @@ const modifyHealth = async (isDamage) => {
 
 const rollDice = async () => {
   if (!currentPlayer.value) return
+
   isRolling.value = true
   diceResult.value = null
+
   try {
+    // On récupère l'ID du skill sélectionné s'il existe
+    const skillId = selectedSkill.value?.skill_id || null
+
     const res = await api.post('/dice/roll', {
       max_value: Number(diceType.value),
-      skill_id: selectedSkill.value?.skill_id || null,
+      skill_id: skillId
     })
+
+    // Mise à jour du résultat visuel
     diceResult.value = res.data.value
-    if (res.data.new_health !== undefined) currentPlayer.value.health = res.data.new_health
-    if (res.data.new_mana !== undefined) currentPlayer.value.mana = res.data.new_mana
+
+    // Mise à jour automatique des ressources si le backend les renvoie
+    if (res.data.new_health !== undefined) {
+      currentPlayer.value.health = res.data.new_health
+    }
+    if (res.data.new_mana !== undefined) {
+      currentPlayer.value.mana = res.data.new_mana
+    }
   } catch (e) {
     handleApiError(e)
   } finally {

@@ -20,7 +20,6 @@ const routes = [
   { path: '/party/list', name: 'PartiesPage', component: PartiesPage },
 
   { path: '/joueur', name: 'Joueur', component: JoueurPage },
-  
   { path: '/characters/create', name: 'CharacterCreate', component: CharacterCreatePage },
 ]
 

@@ -127,29 +127,16 @@ const modifyHealth = async (isDamage) => {
 
 const rollDice = async () => {
   if (!currentPlayer.value) return
-
   isRolling.value = true
   diceResult.value = null
-
   try {
-    // On récupère l'ID du skill sélectionné s'il existe
-    const skillId = selectedSkill.value?.skill_id || null
-
     const res = await api.post('/dice/roll', {
       max_value: Number(diceType.value),
-      skill_id: skillId
+      skill_id: selectedSkill.value?.skill_id || null,
     })
-
-    // Mise à jour du résultat visuel
     diceResult.value = res.data.value
-
-    // Mise à jour automatique des ressources si le backend les renvoie
-    if (res.data.new_health !== undefined) {
-      currentPlayer.value.health = res.data.new_health
-    }
-    if (res.data.new_mana !== undefined) {
-      currentPlayer.value.mana = res.data.new_mana
-    }
+    if (res.data.new_health !== undefined) currentPlayer.value.health = res.data.new_health
+    if (res.data.new_mana !== undefined) currentPlayer.value.mana = res.data.new_mana
   } catch (e) {
     handleApiError(e)
   } finally {

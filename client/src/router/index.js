@@ -18,9 +18,10 @@ const routes = [
 
   { path: '/gamemaster/dashboard', name: 'MaitreJeuDashboard', component: MaitreJeuViewPage },
   { path: '/party/list', name: 'PartiesPage', component: PartiesPage },
- 
+
   { path: '/joueur', name: 'Joueur', component: JoueurPage },
-  { path: '/character/create', name: 'CharacterCreate', component: CharacterCreatePage },
+  
+  { path: '/characters/create', name: 'CharacterCreate', component: CharacterCreatePage },
 ]
 
 export default createRouter({

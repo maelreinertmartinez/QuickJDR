@@ -23,7 +23,16 @@ const createCharacter = async () => {
 
   loading.value = true
   try {
-    await api.post('/character', form.value)
+    const payload = {
+      name: form.value.name,
+      party_id: 1, // Assurez-vous qu'une partie existe avec cet ID
+      health: form.value.health,
+      max_health: form.value.health, // On utilise la même valeur pour le Max
+      max_mana: form.value.mana,
+      max_armor: form.value.armor,
+    }
+
+    await api.post('/characters', payload)
     window.location.href = '/joueur'
   } catch (err) {
     error.value = err.response?.data?.message || 'Erreur de création.'

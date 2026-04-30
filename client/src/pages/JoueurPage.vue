@@ -33,22 +33,42 @@ const handleApiError = (error) => {
 
 const fetchData = async () => {
   try {
-    const charRes = await api.get('/character')
-    if (!charRes.data) {
-      window.location.href = '/character/create'
+    const charRes = await api.get('/characters')
+
+    // 1. Le backend renvoie un tableau. On extrait le premier élément.
+    const characterData = Array.isArray(charRes.data) ? charRes.data[0] : charRes.data
+    console.log('Données reçues du serveur :', charRes.data)
+    // 2. Vérification de l'existence du personnage
+    // Si characterData est null, undefined ou n'a pas d'ID, on redirige vers la création.
+    if (!characterData || !characterData.id) {
+      console.warn('Aucun personnage trouvé, redirection vers la création...')
+      //window.location.href = '/characters/create'
       return
     }
-    currentPlayer.value = charRes.data
+
+    // 3. On remplit currentPlayer avec les bonnes clés de ta base de données
+    // On s'assure que les stats (health, mana, armor) correspondent aux colonnes SQL.
     currentPlayer.value = {
-      ...charRes.data,
+      ...characterData,
+      // On utilise les noms de colonnes exacts de ta table SQL
+      health: characterData.health,
+      max_health: characterData.max_health,
+      mana: characterData.mana ?? 0,
+      max_mana: characterData.max_mana,
+      armor: characterData.armor ?? 0,
+      max_armor: characterData.max_armor,
+      // On conserve tes stats de test pour l'affichage des caractéristiques (FOR, DEX, etc.)
       stats: mockStats,
-      max_armor: 20,
     }
-    const skillsRes = await api.get('/skill/list')
+
+    // 4. On récupère la liste des compétences
+    const skillsRes = await api.get('/skills/list')
     skills.value = Array.isArray(skillsRes.data) ? skillsRes.data : []
   } catch (e) {
+    console.error('Erreur lors de la récupération des données :', e)
+    // Si l'API renvoie 404, on redirige aussi vers la création
     if (e.response?.status === 404) {
-      window.location.href = '/character/create'
+      window.location.href = '/characters/create'
     } else {
       handleApiError(e)
     }
@@ -57,7 +77,7 @@ const fetchData = async () => {
 
 const sleep = async () => {
   try {
-    const res = await api.post('/character/sleep')
+    const res = await api.post('/characters/sleep')
     currentPlayer.value.health = res.data.new_health
     currentPlayer.value.mana = res.data.new_mana
   } catch (e) {
@@ -69,7 +89,7 @@ const modifyHealth = async (isDamage) => {
   if (!currentPlayer.value || healthModifier.value <= 0) return
   try {
     const damageValue = isDamage ? healthModifier.value : -healthModifier.value
-    const res = await api.post('/character/take-damage', { damage: damageValue })
+    const res = await api.post('/characters/take-damage', { damage: damageValue })
     currentPlayer.value.health = res.data.new_health
     healthModifier.value = 0
   } catch (e) {

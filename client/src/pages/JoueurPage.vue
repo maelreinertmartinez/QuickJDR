@@ -35,7 +35,7 @@ const fetchData = async () => {
   try {
     const charRes = await api.get('/characters')
 
-    // 1. Le backend renvoie un tableau. On extrait le premier élément.
+
     const characterData = Array.isArray(charRes.data) ? charRes.data[0] : charRes.data
     console.log('Données reçues du serveur :', charRes.data)
     // 2. Vérification de l'existence du personnage
@@ -46,8 +46,7 @@ const fetchData = async () => {
       return
     }
 
-    // 3. On remplit currentPlayer avec les bonnes clés de ta base de données
-    // On s'assure que les stats (health, mana, armor) correspondent aux colonnes SQL.
+ 
     currentPlayer.value = {
       ...characterData,
       // On utilise les noms de colonnes exacts de ta table SQL
